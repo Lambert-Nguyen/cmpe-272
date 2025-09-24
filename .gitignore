@@ -1,25 +1,65 @@
-# CakePHP 3
+# PHP specific ignores
+*.log
+*.tmp
+*.cache
 
-/vendor/*
-/config/app.php
+# Dependency directories
+vendor/
+node_modules/
 
-/tmp/cache/models/*
-!/tmp/cache/models/empty
-/tmp/cache/persistent/*
-!/tmp/cache/persistent/empty
-/tmp/cache/views/*
-!/tmp/cache/views/empty
-/tmp/sessions/*
-!/tmp/sessions/empty
-/tmp/tests/*
-!/tmp/tests/empty
+# Environment files
+.env
+.env.local
+.env.production
+.env.staging
 
-/logs/*
-!/logs/empty
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# CakePHP 2
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-/app/tmp/*
-/app/Config/core.php
-/app/Config/database.php
-/vendors/*
+# Application specific
+config/local.php
+logs/
+cache/
+tmp/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Composer
+composer.phar
+composer.lock
+
+# Build artifacts
+build/
+dist/
+
+# Test coverage
+coverage/
+*.coverage
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Session files
+sessions/
+
+# Upload directories
+uploads/
+files/
