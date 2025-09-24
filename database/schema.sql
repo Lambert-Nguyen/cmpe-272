@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Insert sample data
 INSERT INTO users (username, email) VALUES 
-('lam_nguyen', 'lam.nguyen@sjsu.edu'),
+('lam_nguyen', 'phuongduylam.nguyen@sjsu.edu'),
 ('prof_sinn', 'richard.sinn@sjsu.edu'),
 ('student1', 'student1@sjsu.edu')
 ON DUPLICATE KEY UPDATE username=username;
