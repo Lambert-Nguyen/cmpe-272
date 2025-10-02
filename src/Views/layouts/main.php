@@ -111,7 +111,7 @@
             </div>
             <hr class="footer-divider">
             <div class="text-center footer-copyright">
-                <p>&copy; 2025 CMPE 272 Project. Built with <i class="fas fa-heart text-danger"></i> for learning.</p>
+                <p>&copy; 2025 CMPE 272 Project - Nguyen Phuong Duy Lam. Built with <i class="fas fa-heart text-danger"></i> for learning.</p>
             </div>
         </div>
     </footer>
