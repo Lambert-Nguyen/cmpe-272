@@ -8,12 +8,20 @@ ini_set('display_errors', 1);
 require_once __DIR__ . '/../config/Router.php';
 require_once __DIR__ . '/../src/Controllers/HomeController.php';
 require_once __DIR__ . '/../src/Controllers/UserController.php';
+require_once __DIR__ . '/../src/Controllers/CompanyController.php';
 
 // Initialize the router
 $router = new Router();
 
-// Define routes
-$router->addRoute('GET', '/', 'HomeController', 'index');
+// Company routes (main website)
+$router->addRoute('GET', '/company', 'CompanyController', 'index');
+$router->addRoute('GET', '/company/about', 'CompanyController', 'about');
+$router->addRoute('GET', '/company/products', 'CompanyController', 'products');
+$router->addRoute('GET', '/company/news', 'CompanyController', 'news');
+$router->addRoute('GET', '/company/contacts', 'CompanyController', 'contacts');
+
+// Legacy routes (CMPE 272 app)
+$router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage
 $router->addRoute('GET', '/about', 'HomeController', 'about');
 
 // User routes

@@ -1,0 +1,18 @@
+# Lambert Nguyen Company Contact Directory
+# Format: Name|Position|Email|Phone|Department
+# 
+Lambert Nguyen|Chief Executive Officer|lambert.nguyen@lambertnguyen.com|+1 (408) 555-0100|Executive
+Sarah Chen|Chief Technology Officer|sarah.chen@lambertnguyen.com|+1 (408) 555-0101|Technology
+Michael Rodriguez|VP of Engineering|michael.rodriguez@lambertnguyen.com|+1 (408) 555-0102|Engineering
+Jessica Kim|VP of Sales & Marketing|jessica.kim@lambertnguyen.com|+1 (408) 555-0103|Sales
+David Thompson|Project Manager|david.thompson@lambertnguyen.com|+1 (408) 555-0104|Project Management
+Emily Wang|Lead Software Developer|emily.wang@lambertnguyen.com|+1 (408) 555-0105|Engineering
+Robert Lee|Cloud Solutions Architect|robert.lee@lambertnguyen.com|+1 (408) 555-0106|Cloud Services
+Maria Garcia|Business Analyst|maria.garcia@lambertnguyen.com|+1 (408) 555-0107|Business Analysis
+James Wilson|DevOps Engineer|james.wilson@lambertnguyen.com|+1 (408) 555-0108|Operations
+Lisa Zhang|UI/UX Designer|lisa.zhang@lambertnguyen.com|+1 (408) 555-0109|Design
+Kevin Park|Data Scientist|kevin.park@lambertnguyen.com|+1 (408) 555-0110|Data Analytics
+Amanda Johnson|HR Manager|amanda.johnson@lambertnguyen.com|+1 (408) 555-0111|Human Resources
+Thomas Brown|Finance Manager|thomas.brown@lambertnguyen.com|+1 (408) 555-0112|Finance
+Rachel Davis|Customer Success Manager|rachel.davis@lambertnguyen.com|+1 (408) 555-0113|Customer Success
+Alex Martinez|Cybersecurity Specialist|alex.martinez@lambertnguyen.com|+1 (408) 555-0114|Security

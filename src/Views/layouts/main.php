@@ -27,8 +27,8 @@
     <nav class="navbar navbar-expand-lg modern-navbar fixed-top" data-aos="fade-down">
         <div class="container">
             <a class="navbar-brand modern-brand" href="/">
-                <i class="fas fa-code me-2"></i>
-                <span class="brand-text">CMPE 272</span>
+                <i class="fas fa-building me-2"></i>
+                <span class="brand-text">Lambert Nguyen Company</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -41,14 +41,33 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/about">
+                        <a class="nav-link modern-nav-link" href="/company/about">
                             <i class="fas fa-info-circle me-1"></i>About
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/users">
-                            <i class="fas fa-users me-1"></i>Users
+                        <a class="nav-link modern-nav-link" href="/company/products">
+                            <i class="fas fa-cogs me-1"></i>Services
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link modern-nav-link" href="/company/news">
+                            <i class="fas fa-newspaper me-1"></i>News
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link modern-nav-link" href="/company/contacts">
+                            <i class="fas fa-phone me-1"></i>Contacts
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-tools me-1"></i>CMPE 272
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/about"><i class="fas fa-info-circle me-2"></i>About Course</a></li>
+                            <li><a class="dropdown-item" href="/users"><i class="fas fa-users me-2"></i>Users</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
