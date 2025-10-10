@@ -26,7 +26,7 @@
   <main>
     <div class="card">
       <canvas id="catCanvas" width="1060" height="640" aria-label="A complex cat drawn with the HTML5 Canvas API"></canvas>
-      <p class="hint">This cat is rendered with layered canvas primitives: paths, arcs, ellipses, gradients, shadows, bezier curves, and subtle animations (ear twitch, tail sway, eye shimmer). No images.</p>
+      <p class="hint">This cat is rendered with layered canvas primitives: paths, arcs, ellipses, gradients, shadows, bezier curves, and complex animations. Watch the cat's eyes track the running mouse, pupils dilate when hunting, and head turn to follow movement. <strong>Every 5 seconds, the cat attempts to catch the mouse!</strong> The animation includes: crouch anticipation, arc-based leap trajectory, success/failure detection, and mouse panic response. <strong>Dynamic weather system</strong> cycles through ☀️ Clear, ☁️ Cloudy, 🌧️ Rain, ❄️ Snow, and ⛈️ Storm with realistic particle effects, lightning flashes, and cat reactions (ears flatten, occasional shaking). The cat has 8 mood states. No images used.</p>
     </div>
   </main>
   <script>
@@ -55,7 +55,9 @@
       u: 0,                // position along [0,1) on the loop
       baseSpeed: 0.0018,   // base parametric speed
       amp: 0.0011,         // speed variation amplitude
-      phase: Math.random()*Math.PI*2
+      phase: Math.random()*Math.PI*2,
+      panicSpeed: 1.0,     // speed multiplier when being chased
+      targetPanicSpeed: 1.0
     };
     const track = { cx: 530, cy: 575, rx: 420, ry: 32 }; // elliptical ground track
 
@@ -63,10 +65,410 @@
     let t = 0; // time
     const TAIL_SWAY = 0.15; // radians amplitude
     const EAR_TWITCH = 0.06; // radians amplitude
+    
+    // Weather system
+    const weather = {
+      current: 'clear',     // clear, rain, snow, cloudy, storm
+      target: 'clear',
+      transition: 0,        // 0-1 transition progress
+      changeTimer: 0,
+      changeInterval: 800,  // ~13 seconds between weather changes
+      intensity: 0,         // Current weather intensity (0-1)
+      targetIntensity: 0,
+      particles: []         // Rain/snow particles
+    };
+    
+    // Initialize weather particles
+    for (let i = 0; i < 150; i++) {
+      weather.particles.push({
+        x: Math.random() * 1060,
+        y: Math.random() * 640,
+        speed: 2 + Math.random() * 4,
+        size: 1 + Math.random() * 2,
+        opacity: 0.3 + Math.random() * 0.4,
+        wind: Math.random() * 2 - 1,
+        wobble: Math.random() * Math.PI * 2
+      });
+    }
+    
+    // Cat tracking state
+    const catState = {
+      headRotation: 0,      // current head rotation
+      targetHeadRot: 0,     // target head rotation
+      leftPupilX: 0,        // left eye pupil offset
+      leftPupilY: 0,
+      rightPupilX: 0,       // right eye pupil offset
+      rightPupilY: 0,
+      mood: 'calm',         // calm, alert, hunting, pouncing, crouching, leaping
+      moodTimer: 0,
+      tailSpeed: 1,         // tail swish speed multiplier
+      pupilDilation: 1,     // 1 = normal, 1.5 = dilated (hunting)
+      
+      // Pounce animation state
+      pounceTimer: 0,
+      pounceInterval: 5000 / 15, // 5 seconds in frames (at ~60fps, 15ms per frame)
+      isPouncing: false,
+      pouncePhase: 'idle',  // idle, crouch, leap, landing, cooldown
+      pounceProgress: 0,
+      pounceStartX: 420,
+      pounceStartY: 300,
+      pounceTargetX: 0,
+      pounceTargetY: 0,
+      bodyOffsetX: 0,
+      bodyOffsetY: 0,
+      catchSuccess: false,
+      catchCooldown: 0
+    };
 
+    // Update weather system
+    function updateWeather() {
+      weather.changeTimer++;
+      
+      // Change weather periodically
+      if (weather.changeTimer >= weather.changeInterval) {
+        const weatherTypes = ['clear', 'rain', 'snow', 'cloudy', 'storm'];
+        let newWeather;
+        do {
+          newWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
+        } while (newWeather === weather.current);
+        
+        weather.target = newWeather;
+        weather.changeTimer = 0;
+        weather.transition = 0;
+        
+        // Set target intensity
+        weather.targetIntensity = {
+          'clear': 0,
+          'cloudy': 0.3,
+          'rain': 0.7,
+          'snow': 0.6,
+          'storm': 1.0
+        }[newWeather];
+      }
+      
+      // Smooth transition
+      if (weather.transition < 1) {
+        weather.transition += 0.01;
+        if (weather.transition >= 1) {
+          weather.current = weather.target;
+        }
+      }
+      
+      // Smooth intensity change
+      weather.intensity += (weather.targetIntensity - weather.intensity) * 0.02;
+      
+      // Update particles based on weather
+      weather.particles.forEach(p => {
+        if (weather.current === 'rain' || weather.current === 'storm') {
+          // Rain falls straight down (with some wind)
+          const stormWind = weather.current === 'storm' ? Math.sin(t * 0.5) * 3 : 0;
+          p.y += p.speed * 2 * weather.intensity;
+          p.x += (p.wind + stormWind) * weather.intensity;
+        } else if (weather.current === 'snow') {
+          // Snow falls slowly and wobbles
+          p.y += p.speed * 0.5 * weather.intensity;
+          p.x += Math.sin(t * 0.3 + p.wobble) * 1.5 * weather.intensity;
+        }
+        
+        // Reset particle when it goes off screen
+        if (p.y > 640) {
+          p.y = -10;
+          p.x = Math.random() * 1060;
+        }
+        if (p.x < -10) p.x = 1070;
+        if (p.x > 1070) p.x = -10;
+      });
+    }
+    
+    // Render weather effects
+    function renderWeather() {
+      const w = weather.current;
+      const intensity = weather.intensity;
+      
+      if (intensity < 0.05) return; // Skip if barely visible
+      
+      // Clouds overlay
+      if (w === 'cloudy' || w === 'storm') {
+        const cloudAlpha = intensity * (w === 'storm' ? 0.5 : 0.3);
+        ctx.fillStyle = `rgba(40, 50, 70, ${cloudAlpha})`;
+        ctx.fillRect(0, 0, 1060, 640);
+        
+        // Draw some cloud shapes
+        ctx.fillStyle = `rgba(60, 70, 90, ${cloudAlpha * 0.6})`;
+        for (let i = 0; i < 8; i++) {
+          const cx = (i * 150 + t * 5) % 1100 - 40;
+          const cy = 50 + (i % 3) * 60;
+          ellipse(cx, cy, 80 + (i % 4) * 20, 40, 0);
+          ctx.fill();
+        }
+      }
+      
+      // Storm lightning
+      if (w === 'storm' && Math.random() < 0.01) {
+        const flashAlpha = 0.3 + Math.random() * 0.4;
+        ctx.fillStyle = `rgba(255, 255, 200, ${flashAlpha * intensity})`;
+        ctx.fillRect(0, 0, 1060, 640);
+      }
+      
+      // Rain particles
+      if (w === 'rain' || w === 'storm') {
+        ctx.strokeStyle = `rgba(150, 180, 220, ${0.4 * intensity})`;
+        ctx.lineWidth = 1;
+        ctx.lineCap = 'round';
+        
+        weather.particles.forEach(p => {
+          const alpha = p.opacity * intensity;
+          ctx.strokeStyle = `rgba(150, 180, 220, ${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x + p.wind * 2, p.y + p.size * 8);
+          ctx.stroke();
+        });
+      }
+      
+      // Snow particles
+      if (w === 'snow') {
+        weather.particles.forEach(p => {
+          const alpha = p.opacity * intensity;
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ellipse(p.x, p.y, p.size * 1.5, p.size * 1.5);
+          ctx.fill();
+          
+          // Slight glow
+          const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+          glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.3})`);
+          glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = glow;
+          ellipse(p.x, p.y, p.size * 3, p.size * 3);
+          ctx.fill();
+        });
+      }
+      
+      // Sunny effect (brighten the scene)
+      if (w === 'clear') {
+        ctx.fillStyle = `rgba(255, 250, 200, ${0.08 * (1 - intensity)})`;
+        ctx.fillRect(0, 0, 1060, 640);
+      }
+    }
+    
+    // Update cat's tracking behavior based on mouse position
+    function updateCatTracking(mouseX, mouseY) {
+      // Cat head is at approximately (420, 300) in world coords
+      const catHeadX = 420;
+      const catHeadY = 300;
+      
+      // Calculate distance and angle to mouse
+      const dx = mouseX - catHeadX;
+      const dy = mouseY - catHeadY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const angleToMouse = Math.atan2(dy, dx);
+      
+      // Pounce timer and trigger
+      if (!catState.isPouncing && catState.catchCooldown <= 0) {
+        catState.pounceTimer++;
+        
+        // Trigger pounce every 5 seconds
+        if (catState.pounceTimer >= catState.pounceInterval) {
+          catState.isPouncing = true;
+          catState.pouncePhase = 'crouch';
+          catState.pounceProgress = 0;
+          catState.pounceTimer = 0;
+          catState.pounceTargetX = mouseX;
+          catState.pounceTargetY = mouseY;
+        }
+      }
+      
+      // Handle pounce animation phases
+      if (catState.isPouncing) {
+        updatePounceAnimation(mouseX, mouseY);
+      } else if (catState.catchCooldown > 0) {
+        catState.catchCooldown--;
+      }
+      
+      // Update mood based on distance (unless pouncing)
+      catState.moodTimer++;
+      if (catState.isPouncing) {
+        // Mood is controlled by pounce phase
+      } else if (dist < 180) {
+        catState.mood = 'pouncing';
+        catState.pupilDilation = 1.8;
+        catState.tailSpeed = 3.5;
+      } else if (dist < 320) {
+        catState.mood = 'hunting';
+        catState.pupilDilation = 1.5;
+        catState.tailSpeed = 2.2;
+      } else if (dist < 500) {
+        catState.mood = 'alert';
+        catState.pupilDilation = 1.2;
+        catState.tailSpeed = 1.5;
+      } else {
+        catState.mood = 'calm';
+        catState.pupilDilation = 1.0;
+        catState.tailSpeed = 1.0;
+      }
+      
+      // Calculate target head rotation (subtle, max ±0.25 radians)
+      let targetRot = angleToMouse * 0.15;
+      targetRot = Math.max(-0.25, Math.min(0.25, targetRot));
+      catState.targetHeadRot = targetRot;
+      
+      // Smooth interpolation for head rotation
+      catState.headRotation += (catState.targetHeadRot - catState.headRotation) * 0.08;
+      
+      // Calculate pupil positions for both eyes
+      // Left eye at approx (34, 70) relative to head, right eye at (86, 74)
+      function calcPupilOffset(eyeLocalX, eyeLocalY) {
+        // Transform eye position to world coords (accounting for head translation)
+        const eyeWorldX = catHeadX + eyeLocalX;
+        const eyeWorldY = catHeadY + eyeLocalY;
+        
+        // Vector from eye to mouse
+        const ex = mouseX - eyeWorldX;
+        const ey = mouseY - eyeWorldY;
+        const elen = Math.sqrt(ex*ex + ey*ey);
+        
+        // Normalize and scale to max pupil movement (6 pixels)
+        const maxMove = 6;
+        let px = (ex / elen) * maxMove;
+        let py = (ey / elen) * maxMove;
+        
+        // Clamp to elliptical bounds (eye is elliptical)
+        const eyeRadX = 10;
+        const eyeRadY = 6;
+        const mag = Math.sqrt((px/eyeRadX)**2 + (py/eyeRadY)**2);
+        if (mag > 1) {
+          px /= mag;
+          py /= mag;
+        }
+        
+        return { px, py };
+      }
+      
+      const leftEye = calcPupilOffset(34, 70);
+      catState.leftPupilX += (leftEye.px - catState.leftPupilX) * 0.12;
+      catState.leftPupilY += (leftEye.py - catState.leftPupilY) * 0.12;
+      
+      const rightEye = calcPupilOffset(86, 74);
+      catState.rightPupilX += (rightEye.px - catState.rightPupilX) * 0.12;
+      catState.rightPupilY += (rightEye.py - catState.rightPupilY) * 0.12;
+    }
+    
+    // Handle pounce animation with multiple phases
+    function updatePounceAnimation(mouseX, mouseY) {
+      catState.pounceProgress++;
+      
+      const crouchDuration = 30;   // ~0.5 seconds
+      const leapDuration = 25;     // ~0.4 seconds
+      const landingDuration = 20;  // ~0.3 seconds
+      const cooldownDuration = 60; // ~1 second
+      
+      if (catState.pouncePhase === 'crouch') {
+        // Crouch down, wiggle butt
+        catState.mood = 'crouching';
+        catState.pupilDilation = 2.0;
+        catState.tailSpeed = 5.0;
+        
+        const crouchT = catState.pounceProgress / crouchDuration;
+        catState.bodyOffsetY = Math.sin(crouchT * Math.PI) * 25; // Crouch down
+        catState.bodyOffsetX = Math.sin(crouchT * Math.PI * 8) * 3; // Wiggle
+        
+        if (catState.pounceProgress >= crouchDuration) {
+          catState.pouncePhase = 'leap';
+          catState.pounceProgress = 0;
+        }
+      } 
+      else if (catState.pouncePhase === 'leap') {
+        // Leap toward target
+        catState.mood = 'leaping';
+        catState.pupilDilation = 2.2;
+        catState.tailSpeed = 6.0;
+        
+        const leapT = catState.pounceProgress / leapDuration;
+        const easeT = 1 - Math.pow(1 - leapT, 3); // Ease out cubic
+        
+        // Arc trajectory
+        const dx = catState.pounceTargetX - catState.pounceStartX;
+        const dy = catState.pounceTargetY - catState.pounceStartY;
+        
+        catState.bodyOffsetX = dx * easeT * 0.4; // Move 40% of distance
+        catState.bodyOffsetY = 25 + dy * easeT * 0.4 - Math.sin(leapT * Math.PI) * 60; // Arc
+        
+        // Check if caught mouse
+        if (leapT > 0.7) {
+          const catchDist = Math.sqrt(
+            Math.pow(mouseX - (catState.pounceStartX + catState.bodyOffsetX), 2) +
+            Math.pow(mouseY - (catState.pounceStartY + catState.bodyOffsetY), 2)
+          );
+          catState.catchSuccess = catchDist < 100;
+        }
+        
+        if (catState.pounceProgress >= leapDuration) {
+          catState.pouncePhase = 'landing';
+          catState.pounceProgress = 0;
+        }
+      }
+      else if (catState.pouncePhase === 'landing') {
+        // Land and settle
+        catState.mood = catState.catchSuccess ? 'victorious' : 'disappointed';
+        catState.pupilDilation = catState.catchSuccess ? 1.5 : 0.8;
+        catState.tailSpeed = catState.catchSuccess ? 3.0 : 0.5;
+        
+        const landT = catState.pounceProgress / landingDuration;
+        const bounce = Math.abs(Math.sin(landT * Math.PI * 2)) * (1 - landT) * 15;
+        
+        catState.bodyOffsetX *= (1 - landT * 0.8);
+        catState.bodyOffsetY = bounce;
+        
+        if (catState.pounceProgress >= landingDuration) {
+          catState.pouncePhase = 'cooldown';
+          catState.pounceProgress = 0;
+        }
+      }
+      else if (catState.pouncePhase === 'cooldown') {
+        // Return to normal position
+        catState.mood = 'calm';
+        catState.pupilDilation = 1.0;
+        catState.tailSpeed = 1.0;
+        
+        const coolT = catState.pounceProgress / cooldownDuration;
+        catState.bodyOffsetX *= (1 - coolT);
+        catState.bodyOffsetY *= (1 - coolT);
+        
+        if (catState.pounceProgress >= cooldownDuration) {
+          catState.isPouncing = false;
+          catState.pouncePhase = 'idle';
+          catState.bodyOffsetX = 0;
+          catState.bodyOffsetY = 0;
+          catState.catchCooldown = 30; // Brief pause before next pounce timer
+          catState.catchSuccess = false;
+        }
+      }
+    }
+    
     function draw(){
       t += 0.015;
       ctx.clearRect(0,0,c.width,c.height);
+      
+      // Update weather system
+      updateWeather();
+      
+      // Calculate mouse position first (needed for cat tracking)
+      // Mouse speeds up when cat is pouncing
+      if (catState.isPouncing && (catState.pouncePhase === 'crouch' || catState.pouncePhase === 'leap')) {
+        mouse.targetPanicSpeed = 2.5; // Panic mode!
+      } else {
+        mouse.targetPanicSpeed = 1.0;
+      }
+      mouse.panicSpeed += (mouse.targetPanicSpeed - mouse.panicSpeed) * 0.1;
+      
+      const ms = (mouse.baseSpeed + mouse.amp * (0.5 + 0.5*Math.sin(t*1.7 + mouse.phase))) * mouse.panicSpeed;
+      mouse.u = (mouse.u + ms) % 1;
+      const theta = mouse.u * Math.PI * 2;
+      const mx = track.cx + track.rx * Math.cos(theta);
+      const my = track.cy + track.ry * Math.sin(theta);
+      
+      // Update cat tracking behavior
+      updateCatTracking(mx, my);
 
       // Night sky gradient backdrop already via CSS. Add moon and stars.
       // Moon
@@ -88,16 +490,26 @@
       grd.addColorStop(0,'#263154'); grd.addColorStop(1,'#1a2340');
       ctx.fillStyle = grd; ctx.fillRect(0,520,1060,120);
 
-      // A few glowing fireflies
-      for(let i=0;i<14;i++){
-        const fx = 80 + (i*70)%980; const fy = 520 + ((i*53)%90);
-        const pul = (Math.sin(t*2 + i)*0.5+0.5)*0.6 + 0.2;
-        const g=ctx.createRadialGradient(fx,fy,0,fx,fy,14);
-        g.addColorStop(0,`rgba(180,255,200,${0.55+pul*0.3})`);
-        g.addColorStop(1,'rgba(180,255,200,0)');
-        ctx.fillStyle=g; ellipse(fx,fy,14,14); ctx.fill();
+      // A few glowing fireflies (only visible in clear/cloudy weather)
+      if (weather.current === 'clear' || weather.current === 'cloudy') {
+        const fireflyAlpha = weather.current === 'clear' ? 1.0 : 0.5;
+        for(let i=0;i<14;i++){
+          const fx = 80 + (i*70)%980; const fy = 520 + ((i*53)%90);
+          const pul = (Math.sin(t*2 + i)*0.5+0.5)*0.6 + 0.2;
+          const g=ctx.createRadialGradient(fx,fy,0,fx,fy,14);
+          g.addColorStop(0,`rgba(180,255,200,${(0.55+pul*0.3) * fireflyAlpha})`);
+          g.addColorStop(1,'rgba(180,255,200,0)');
+          ctx.fillStyle=g; ellipse(fx,fy,14,14); ctx.fill();
+        }
       }
+      
+      // Weather effects layer 1 (behind cat)
+      renderWeather();
 
+      // CAT: Apply pounce body offset
+      ctx.save();
+      ctx.translate(catState.bodyOffsetX, catState.bodyOffsetY);
+      
       // CAT: shadow
       ctx.fillStyle = 'rgba(0,0,0,0.28)'; ellipse(520,520,200,28); ctx.fill();
 
@@ -126,8 +538,8 @@
         ctx.stroke();
       }
 
-      // Tail (animated sway)
-      const sway = Math.sin(t)*TAIL_SWAY; // -amp..+amp
+      // Tail (animated sway - speed varies with mood)
+      const sway = Math.sin(t * catState.tailSpeed) * TAIL_SWAY; // -amp..+amp
       ctx.save();
       ctx.translate(740,380); // tail root
       ctx.rotate(sway);
@@ -184,10 +596,19 @@
       });
       ctx.fill();
 
-      // Head group with slight ear twitch
+      // Head group with slight ear twitch and tracking rotation
       const twitch = Math.sin(t*3)*EAR_TWITCH;
+      
+      // Add shake effect in rain/storm
+      let shakeX = 0, shakeY = 0;
+      if ((weather.current === 'rain' || weather.current === 'storm') && Math.random() < 0.05 * weather.intensity) {
+        shakeX = (Math.random() - 0.5) * 3 * weather.intensity;
+        shakeY = (Math.random() - 0.5) * 2 * weather.intensity;
+      }
+      
       ctx.save();
-      ctx.translate(420,300);
+      ctx.translate(420 + shakeX, 300 + shakeY);
+      ctx.rotate(catState.headRotation); // Apply tracking rotation
 
       // Neck connection
       ctx.fillStyle = '#f0d2b1';
@@ -205,16 +626,21 @@
       ctx.fillStyle = headGrad;
       ellipse(40,60,90,80, -0.08); ctx.fill();
 
-      // Ears
-      // Left ear (animated tilt)
-      ctx.save(); ctx.translate(-10,6); ctx.rotate(-0.6 + twitch);
+      // Ears (perk up when alert/hunting, flatten in rain/storm)
+      let earPerk = (catState.mood === 'calm') ? 0 : (catState.mood === 'alert' ? 0.08 : 0.15);
+      if (weather.current === 'rain' || weather.current === 'storm') {
+        earPerk -= 0.2 * weather.intensity; // Flatten ears in bad weather
+      }
+      
+      // Left ear (animated tilt + alert perk)
+      ctx.save(); ctx.translate(-10,6); ctx.rotate(-0.6 + twitch + earPerk);
       ctx.fillStyle = '#d9b48a';
       path(()=>{ ctx.moveTo(0,0); ctx.lineTo(40,-80); ctx.lineTo(65,-10); ctx.quadraticCurveTo(40,0,0,0); }); ctx.fill();
       ctx.fillStyle = '#ffb9b9'; path(()=>{ ctx.moveTo(18,-16); ctx.lineTo(40,-64); ctx.lineTo(52,-18); ctx.quadraticCurveTo(36,-8,18,-16); }); ctx.fill();
       ctx.restore();
 
       // Right ear
-      ctx.save(); ctx.translate(84,12); ctx.rotate(0.55 - twitch*0.5);
+      ctx.save(); ctx.translate(84,12); ctx.rotate(0.55 - twitch*0.5 - earPerk);
       ctx.fillStyle = '#d9b48a';
       path(()=>{ ctx.moveTo(0,0); ctx.lineTo(-44,-80); ctx.lineTo(-64,-10); ctx.quadraticCurveTo(-40,0,0,0); }); ctx.fill();
       ctx.fillStyle = '#ffb9b9'; path(()=>{ ctx.moveTo(-18,-16); ctx.lineTo(-38,-62); ctx.lineTo(-50,-18); ctx.quadraticCurveTo(-34,-8,-18,-16); }); ctx.fill();
@@ -231,24 +657,35 @@
       });
       ctx.fill();
 
-      // Eyes with shimmer
-      function eye(cx,cy,open=1){
+      // Eyes with shimmer and tracking
+      function eye(cx,cy,pupilOffsetX,pupilOffsetY,open=1){
         // sclera
         ctx.fillStyle = '#dfefff'; ellipse(cx,cy,22,12*open, -0.08); ctx.fill();
-        // iris
-        const ir = ctx.createRadialGradient(cx-2,cy-2,2,cx,cy,12);
+        
+        // iris (moves with pupil)
+        const irisX = cx + pupilOffsetX * 0.5;
+        const irisY = cy + pupilOffsetY * 0.5;
+        const ir = ctx.createRadialGradient(irisX-2,irisY-2,2,irisX,irisY,12);
         ir.addColorStop(0,'#a9f7df'); ir.addColorStop(1,'#2bd4a3');
-        ctx.fillStyle = ir; ellipse(cx,cy,12,12*open); ctx.fill();
-        // pupil
-        ctx.fillStyle = '#0b1920'; ellipse(cx,cy,4,8*open); ctx.fill();
-        // highlight
-        ctx.fillStyle = 'rgba(255,255,255,0.9)'; ellipse(cx-4,cy-5,3,3*open); ctx.fill();
+        ctx.fillStyle = ir; ellipse(irisX,irisY,12,12*open); ctx.fill();
+        
+        // pupil (tracks mouse, dilates based on mood)
+        const pupilX = cx + pupilOffsetX;
+        const pupilY = cy + pupilOffsetY;
+        const pupilSize = 4 * catState.pupilDilation;
+        ctx.fillStyle = '#0b1920'; ellipse(pupilX,pupilY,pupilSize,8*open*catState.pupilDilation); ctx.fill();
+        
+        // highlight (follows pupil slightly)
+        ctx.fillStyle = 'rgba(255,255,255,0.9)'; 
+        ellipse(pupilX-4,pupilY-5,3,3*open); ctx.fill();
+        
         // bottom shimmer
-        ctx.fillStyle = 'rgba(255,255,255,0.35)'; ellipse(cx+3,cy+4,5,2*open,0.3); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.35)'; 
+        ellipse(cx+3,cy+4,5,2*open,0.3); ctx.fill();
       }
       const blink = (Math.sin(t*2.6 + 1.7) > 0.92) ? 0.2 : 1; // occasional blink
-      eye(34,70,blink);
-      eye(86,74,blink*0.98);
+      eye(34, 70, catState.leftPupilX, catState.leftPupilY, blink);
+      eye(86, 74, catState.rightPupilX, catState.rightPupilY, blink*0.98);
 
       // Eyebrows / lids
       ctx.strokeStyle = 'rgba(40,20,10,0.6)'; ctx.lineWidth=3; ctx.lineCap='round';
@@ -277,16 +714,11 @@
       ctx.fillStyle = '#caa34a'; ellipse(60,146,3,3); ctx.fill();
 
       ctx.restore(); // end head group
+      
+      ctx.restore(); // end cat body offset transform
 
       // Animated MOUSE running around the ground
-      // Update parametric position with slight speed variation
-      const ms = mouse.baseSpeed + mouse.amp * (0.5 + 0.5*Math.sin(t*1.7 + mouse.phase));
-      mouse.u = (mouse.u + ms) % 1;
-
-      // Elliptical track param
-      const theta = mouse.u * Math.PI * 2;
-      const mx = track.cx + track.rx * Math.cos(theta);
-      const my = track.cy + track.ry * Math.sin(theta);
+      // (position already calculated at start of draw() for tracking)
       const txv = -track.rx * Math.sin(theta); // tangent x
       const tyv =  track.ry * Math.cos(theta); // tangent y
       const mang = Math.atan2(tyv, txv);
@@ -297,7 +729,20 @@
 
       // Mouse body and parts (small, ~36px long)
       ctx.save();
-      ctx.translate(mx, my + (-2 + Math.sin(t*10 + mouse.phase)*1.2));
+      
+      // Add panic indicator (sweat drops when being chased)
+      if (mouse.panicSpeed > 1.5) {
+        ctx.fillStyle = 'rgba(100, 150, 255, 0.6)';
+        const sweat1X = mx - 8 + Math.sin(t*15) * 3;
+        const sweat1Y = my - 8 + (t*8 % 12);
+        ellipse(sweat1X, sweat1Y, 2, 3); ctx.fill();
+        
+        const sweat2X = mx + 8 + Math.cos(t*12) * 3;
+        const sweat2Y = my - 6 + (t*10 % 15);
+        ellipse(sweat2X, sweat2Y, 2, 3); ctx.fill();
+      }
+      
+      ctx.translate(mx, my + (-2 + Math.sin(t*10*mouse.panicSpeed + mouse.phase)*1.2));
       ctx.rotate(mang);
 
       // Tail with wiggle
@@ -345,6 +790,83 @@
       for(let i=0;i<20;i++){
         const gx = (i*55)%1060; const gh = 10 + (i%5)*12;
         path(()=>{ ctx.moveTo(gx,640); ctx.quadraticCurveTo(gx-6,630-gh,gx-2,620-gh*1.6); ctx.lineTo(gx+6,640); }); ctx.fill();
+      }
+      
+      // Weather indicator (top-left corner)
+      ctx.font = 'bold 16px ui-sans-serif, system-ui';
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.textAlign = 'left';
+      const weatherEmojis = {
+        clear: '☀️',
+        cloudy: '☁️',
+        rain: '🌧️',
+        snow: '❄️',
+        storm: '⛈️'
+      };
+      const weatherColors = {
+        clear: '#ffd166',
+        cloudy: '#9e9e9e',
+        rain: '#64b5f6',
+        snow: '#e3f2fd',
+        storm: '#5c6bc0'
+      };
+      ctx.fillStyle = weatherColors[weather.current] || '#ffffff';
+      ctx.fillText(`${weatherEmojis[weather.current]} ${weather.current.toUpperCase()}`, 20, 30);
+      
+      // Weather intensity bar
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(20, 40, 100, 6);
+      ctx.fillStyle = weatherColors[weather.current] || '#ffffff';
+      ctx.fillRect(20, 40, 100 * weather.intensity, 6);
+      
+      // Mood indicator (top-right corner)
+      ctx.font = 'bold 16px ui-sans-serif, system-ui';
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.textAlign = 'right';
+      const moodColors = {
+        calm: '#88f5d1',
+        alert: '#ffd166',
+        hunting: '#ff9aa2',
+        pouncing: '#ff6b6b',
+        crouching: '#ff9aa2',
+        leaping: '#ff3333',
+        victorious: '#4caf50',
+        disappointed: '#9e9e9e'
+      };
+      const moodEmojis = {
+        calm: '😺',
+        alert: '👀',
+        hunting: '🎯',
+        pouncing: '⚡',
+        crouching: '🐱',
+        leaping: '🚀',
+        victorious: '🎉',
+        disappointed: '😿'
+      };
+      ctx.fillStyle = moodColors[catState.mood] || '#88f5d1';
+      ctx.fillText(`${moodEmojis[catState.mood] || '😺'} ${catState.mood.toUpperCase()}`, 1040, 30);
+      
+      // Pounce timer countdown
+      if (!catState.isPouncing && catState.catchCooldown <= 0) {
+        const timeToNext = Math.max(0, catState.pounceInterval - catState.pounceTimer);
+        const seconds = (timeToNext * 0.015).toFixed(1);
+        ctx.font = '14px ui-sans-serif, system-ui';
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.fillText(`Next pounce in: ${seconds}s`, 1040, 55);
+      }
+      
+      // Success/failure message
+      if (catState.pouncePhase === 'landing' || catState.pouncePhase === 'cooldown') {
+        ctx.font = 'bold 24px ui-sans-serif, system-ui';
+        ctx.textAlign = 'center';
+        const alpha = catState.pouncePhase === 'landing' ? 1.0 : (1 - catState.pounceProgress / 60);
+        ctx.fillStyle = catState.catchSuccess 
+          ? `rgba(76, 175, 80, ${alpha})` 
+          : `rgba(158, 158, 158, ${alpha})`;
+        ctx.fillText(
+          catState.catchSuccess ? '🎊 CAUGHT! 🎊' : '😿 MISSED!',
+          530, 200
+        );
       }
 
       requestAnimationFrame(draw);
