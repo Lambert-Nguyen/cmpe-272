@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab - SVG Cat (Complex)</title>
+  <style>
+    :root{ --bg:#0b1020; --ink:#eaeef9; --sky1:#1a2340; --sky2:#2b3a66; --moon:#ffe9b3; --fur1:#f0d2b1; --fur2:#d9b48a; --fur3:#a87b53; --ear:#ffb9b9; --eye1:#a9f7df; --eye2:#2bd4a3; --pupil:#0b1920; --collar:#ff6b6b; --bell:#ffd166; }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial}
+    header{padding:16px 20px;background:#0f1630;box-shadow:0 2px 12px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+    main{max-width:1100px;margin:24px auto;padding:0 16px}
+    .card{background:#0f1630;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:18px}
+    svg{width:100%;height:auto;display:block;border-radius:12px;background: radial-gradient(1200px 500px at 50% -100%, var(--sky2) 0%, var(--sky1) 45%, #0b1020 90%)}
+    .hint{margin-top:10px;color:#a9b3d1;font-size:.95rem}
+    a{color:#7aa2ff}
+  </style>
+</head>
+<body>
+  <header>
+    <strong>CMPE 272 Labs</strong> · SVG Demo: Complex Cat
+    <span style="float:right"><a href="/">Back to Site</a></span>
+  </header>
+  <main>
+    <div class="card">
+      <svg viewBox="0 0 1060 640" role="img" aria-label="A complex cat drawn with inline SVG primitives">
+        <defs>
+          <radialGradient id="moonGlow" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#ffe9b3" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#ffe9b3" stop-opacity="0.05" />
+          </radialGradient>
+          <linearGradient id="furGrad" x1="35%" y1="35%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="#d9b48a" />
+            <stop offset="50%" stop-color="#f0d2b1" />
+            <stop offset="100%" stop-color="#a87b53" />
+          </linearGradient>
+          <linearGradient id="tailGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f0d2b1" />
+            <stop offset="100%" stop-color="#a87b53" />
+          </linearGradient>
+          <radialGradient id="irisGrad" cx="45%" cy="45%" r="60%">
+            <stop offset="0%" stop-color="#a9f7df" />
+            <stop offset="100%" stop-color="#2bd4a3" />
+          </radialGradient>
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+            <feOffset dx="0" dy="2" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <clipPath id="headClip">
+            <ellipse cx="460" cy="300" rx="90" ry="80"/>
+          </clipPath>
+        </defs>
+
+        <!-- Moon and stars -->
+        <circle cx="860" cy="110" r="52" fill="url(#moonGlow)"/>
+        <g fill="#e9f3ff">
+          <circle cx="90" cy="60" r="1.3"/>
+          <circle cx="210" cy="120" r="1.0"/>
+          <circle cx="340" cy="50" r="1.4"/>
+          <circle cx="520" cy="100" r="1.1"/>
+          <circle cx="680" cy="70" r="1.3"/>
+          <circle cx="760" cy="150" r="1.2"/>
+          <circle cx="920" cy="90" r="1.2"/>
+          <circle cx="980" cy="160" r="1.0"/>
+        </g>
+
+        <!-- Ground -->
+        <rect x="0" y="520" width="1060" height="120" fill="#1a2340"/>
+
+        <!-- Cat shadow -->
+        <ellipse cx="520" cy="520" rx="200" ry="28" fill="rgba(0,0,0,0.28)"/>
+
+        <!-- Body -->
+        <path filter="url(#softShadow)" fill="url(#furGrad)" d="M380,330 C340,420 360,500 520,520 C700,535 750,460 740,380 C730,310 680,280 620,270 C560,260 430,270 380,330 Z"/>
+
+        <!-- Back stripes -->
+        <g stroke="rgba(60,40,30,0.22)" stroke-linecap="round" stroke-width="6">
+          <path d="M450,350 Q460,330 500,340"/>
+          <path d="M490,360 Q500,340 540,350"/>
+          <path d="M530,370 Q540,350 580,360"/>
+          <path d="M570,380 Q580,360 620,370"/>
+          <path d="M610,390 Q620,370 660,380"/>
+        </g>
+
+        <!-- Tail -->
+        <path fill="url(#tailGrad)" stroke="rgba(60,40,30,0.3)" stroke-width="3" d="M740,380 C830,350 900,360 910,330 C920,300 850,290 820,310 C790,330 780,350 770,360 C760,370 750,375 740,380 Z"/>
+        <path fill="rgba(80,55,35,0.9)" d="M900,328 C905,320 910,315 915,314 C918,328 908,340 896,342 C895,338 898,332 900,328 Z"/>
+
+        <!-- Legs -->
+        <g>
+          <g>
+            <defs>
+              <linearGradient id="legGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#f0d2b1"/>
+                <stop offset="100%" stop-color="#c99f74"/>
+              </linearGradient>
+            </defs>
+            <rect x="444" y="430" width="34" height="110" rx="14" fill="url(#legGrad)"/>
+            <ellipse cx="465" cy="535" rx="22" ry="10" fill="#e1c19a"/>
+            <ellipse cx="458" cy="535" rx="4" ry="6" fill="#794c2b"/>
+            <ellipse cx="472" cy="535" rx="4" ry="6" fill="#794c2b"/>
+
+            <rect x="504" y="430" width="34" height="110" rx="14" fill="url(#legGrad)"/>
+            <ellipse cx="525" cy="535" rx="22" ry="10" fill="#e1c19a"/>
+            <ellipse cx="518" cy="535" rx="4" ry="6" fill="#794c2b"/>
+            <ellipse cx="532" cy="535" rx="4" ry="6" fill="#794c2b"/>
+
+            <rect x="594" y="430" width="34" height="110" rx="14" fill="url(#legGrad)" opacity="0.9"/>
+            <ellipse cx="615" cy="535" rx="22" ry="10" fill="#e1c19a" opacity="0.9"/>
+          </g>
+        </g>
+
+        <!-- Chest fluff -->
+        <path fill="#f7ead7" d="M470,390 C450,420 470,440 490,450 C520,460 540,450 545,430 C520,430 500,410 470,390 Z"/>
+
+        <!-- Neck connection -->
+        <path fill="#f0d2b1" d="M400,340 Q430,360 460,370 Q470,350 450,320 Q430,300 410,310 Z"/>
+
+        <!-- Head base -->
+        <ellipse cx="460" cy="300" rx="90" ry="80" fill="url(#furGrad)" filter="url(#softShadow)"/>
+
+        <!-- Ears -->
+        <g>
+          <path fill="#d9b48a" d="M412,264 L372,186 L348,256 Q382,264 412,264 Z"/>
+          <path fill="#ffb9b9" d="M398,246 L378,200 L366,242 Q386,248 398,246 Z"/>
+
+          <path fill="#d9b48a" d="M508,268 L552,190 L572,260 Q532,268 508,268 Z"/>
+          <path fill="#ffb9b9" d="M522,250 L544,204 L556,246 Q536,252 522,250 Z"/>
+        </g>
+
+        <!-- Face mask -->
+        <path fill="rgba(190,140,90,0.35)" d="M420,310 C430,330 450,340 470,340 C490,340 510,330 520,312 Q494,310 470,308 Q446,306 420,310 Z"/>
+
+        <!-- Eyes -->
+        <g clip-path="url(#headClip)">
+          <ellipse cx="434" cy="310" rx="22" ry="12" fill="#dfefff"/>
+          <ellipse cx="434" cy="310" rx="12" ry="12" fill="url(#irisGrad)"/>
+          <ellipse cx="434" cy="310" rx="4" ry="8" fill="#0b1920"/>
+          <circle cx="430" cy="305" r="3" fill="white"/>
+          <ellipse cx="441" cy="316" rx="5" ry="2" fill="rgba(255,255,255,0.35)"/>
+
+          <ellipse cx="486" cy="314" rx="22" ry="12" fill="#dfefff"/>
+          <ellipse cx="486" cy="314" rx="12" ry="12" fill="url(#irisGrad)"/>
+          <ellipse cx="486" cy="314" rx="4" ry="8" fill="#0b1920"/>
+          <circle cx="482" cy="309" r="3" fill="white"/>
+          <ellipse cx="493" cy="320" rx="5" ry="2" fill="rgba(255,255,255,0.35)"/>
+        </g>
+
+        <!-- Eyebrows -->
+        <g stroke="rgba(40,20,10,0.6)" stroke-width="3" stroke-linecap="round">
+          <path d="M418,298 Q436,288 458,296"/>
+          <path d="M470,300 Q492,290 510,300"/>
+        </g>
+
+        <!-- Nose & mouth -->
+        <path fill="#ff9aa2" d="M466,332 L474,332 Q470,340 466,332 Z"/>
+        <path stroke="#9d6a5a" stroke-width="2" fill="none" d="M470,340 Q468,346 462,350"/>
+        <path stroke="#9d6a5a" stroke-width="2" fill="none" d="M470,340 Q472,346 478,350"/>
+
+        <!-- Whiskers -->
+        <g stroke="rgba(240,240,240,0.9)" stroke-width="1.5" stroke-linecap="round">
+          <path d="M436,330 Q410,324 370,328"/>
+          <path d="M436,336 Q408,330 360,334"/>
+          <path d="M436,342 Q404,336 350,340"/>
+
+          <path d="M494,332 Q520,326 560,330"/>
+          <path d="M494,338 Q522,332 570,336"/>
+          <path d="M494,344 Q526,338 580,342"/>
+        </g>
+
+        <!-- Collar & bell -->
+        <rect x="400" y="356" width="120" height="14" rx="7" fill="#ff6b6b"/>
+        <ellipse cx="460" cy="370" rx="10" ry="12" fill="#ffd166"/>
+        <circle cx="460" cy="380" r="3" fill="#caa34a"/>
+
+        <!-- Foreground grass silhouettes -->
+        <g fill="rgba(42,58,100,0.7)">
+          <path d="M40,640 Q34,630 38,618 L46,640 Z"/>
+          <path d="M95,640 Q89,628 92,616 L100,640 Z"/>
+          <path d="M150,640 Q144,628 148,616 L156,640 Z"/>
+          <path d="M205,640 Q199,628 202,616 L210,640 Z"/>
+          <path d="M260,640 Q254,628 257,616 L265,640 Z"/>
+          <path d="M315,640 Q309,628 312,616 L320,640 Z"/>
+        </g>
+
+        <!-- Optional tiny glow fireflies -->
+        <g filter="url(#glow)">
+          <circle cx="140" cy="560" r="3" fill="#b4ffc8"/>
+          <circle cx="300" cy="590" r="3" fill="#b4ffc8"/>
+          <circle cx="880" cy="560" r="3" fill="#b4ffc8"/>
+        </g>
+      </svg>
+      <p class="hint">This cat uses inline SVG with layered gradients, filters, and clipPaths. For performance, animation was omitted; use SMIL or CSS animations if desired.</p>
+    </div>
+  </main>
+</body>
+</html>

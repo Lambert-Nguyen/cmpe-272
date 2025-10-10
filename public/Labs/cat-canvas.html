@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab - Canvas Cat (Complex)</title>
+  <style>
+    :root{
+      --bg:#0b1020; --ink:#eaeef9; --sky1:#1a2340; --sky2:#2b3a66; --moon:#ffe9b3; --star:#e9f3ff;
+      --fur1:#f0d2b1; --fur2:#d9b48a; --fur3:#a87b53; --earInner:#ffb9b9; --eye:#88f5d1; --iris:#2bd4a3; --pupil:#0b1920; --nose:#ff9aa2; --collar:#ff6b6b; --bell:#ffd166;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial}
+    header{padding:16px 20px;background:#0f1630;box-shadow:0 2px 12px rgba(0,0,0,.3);position:sticky;top:0;z-index:10}
+    main{max-width:1100px;margin:24px auto;padding:0 16px}
+    .card{background:#0f1630;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:18px}
+    canvas{width:100%;height:auto;max-width:1060px;border-radius:12px;display:block;margin:auto;background: radial-gradient(1200px 500px at 50% -100%, var(--sky2) 0%, var(--sky1) 45%, #0b1020 90%)}
+    .hint{margin-top:10px;color:#a9b3d1;font-size:.95rem}
+    a{color:#7aa2ff}
+  </style>
+</head>
+<body>
+  <header>
+    <strong>CMPE 272 Labs</strong> · Canvas API Demo: Complex Cat
+    <span style="float:right"><a href="/">Back to Site</a></span>
+  </header>
+  <main>
+    <div class="card">
+      <canvas id="catCanvas" width="1060" height="640" aria-label="A complex cat drawn with the HTML5 Canvas API"></canvas>
+      <p class="hint">This cat is rendered with layered canvas primitives: paths, arcs, ellipses, gradients, shadows, bezier curves, and subtle animations (ear twitch, tail sway, eye shimmer). No images.</p>
+    </div>
+  </main>
+  <script>
+    const c = document.getElementById('catCanvas');
+    const ctx = c.getContext('2d');
+
+    // Utility helpers
+    function ellipse(x,y,rx,ry,rot=0){
+      ctx.beginPath();
+      ctx.ellipse(x,y,rx,ry,rot,0,Math.PI*2);
+      ctx.closePath();
+    }
+    function roundedRect(x,y,w,h,r){
+      ctx.beginPath();
+      ctx.moveTo(x+r,y);
+      ctx.arcTo(x+w,y,x+w,y+h,r);
+      ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r);
+      ctx.arcTo(x,y,x+w,y,r);
+      ctx.closePath();
+    }
+    function path(fn){ ctx.beginPath(); fn(); ctx.closePath(); }
+
+    // Scene parameters for tiny animations
+    let t = 0; // time
+    const TAIL_SWAY = 0.15; // radians amplitude
+    const EAR_TWITCH = 0.06; // radians amplitude
+
+    function draw(){
+      t += 0.015;
+      ctx.clearRect(0,0,c.width,c.height);
+
+      // Night sky gradient backdrop already via CSS. Add moon and stars.
+      // Moon
+      let moonX = 860, moonY = 110;
+      let moonGrad = ctx.createRadialGradient(moonX-12, moonY-12, 8, moonX, moonY, 80);
+      moonGrad.addColorStop(0, 'rgba(255,233,179,0.95)');
+      moonGrad.addColorStop(1, 'rgba(255,233,179,0.05)');
+      ctx.fillStyle = moonGrad; ellipse(moonX,moonY,52,52); ctx.fill();
+
+      // Stars
+      function star(x,y,s){ ctx.fillStyle = '#e9f3ff'; ellipse(x,y,s,s); ctx.fill(); }
+      for(let i=0;i<90;i++){
+        const x = (i*97) % 1040 + 10; const y = (i*193) % 260 + 20; const s = (i%5===0)?1.6: (i%3===0?1.2:0.9);
+        star(x,y,s);
+      }
+
+      // Ground
+      let grd = ctx.createLinearGradient(0,520,0,640);
+      grd.addColorStop(0,'#263154'); grd.addColorStop(1,'#1a2340');
+      ctx.fillStyle = grd; ctx.fillRect(0,520,1060,120);
+
+      // A few glowing fireflies
+      for(let i=0;i<14;i++){
+        const fx = 80 + (i*70)%980; const fy = 520 + ((i*53)%90);
+        const pul = (Math.sin(t*2 + i)*0.5+0.5)*0.6 + 0.2;
+        const g=ctx.createRadialGradient(fx,fy,0,fx,fy,14);
+        g.addColorStop(0,`rgba(180,255,200,${0.55+pul*0.3})`);
+        g.addColorStop(1,'rgba(180,255,200,0)');
+        ctx.fillStyle=g; ellipse(fx,fy,14,14); ctx.fill();
+      }
+
+      // CAT: shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ellipse(520,520,200,28); ctx.fill();
+
+      // Body (layered fur gradient)
+      const bodyGrad = ctx.createLinearGradient(360,260,720,520);
+      bodyGrad.addColorStop(0,'#d9b48a');
+      bodyGrad.addColorStop(0.5,'#f0d2b1');
+      bodyGrad.addColorStop(1,'#a87b53');
+      ctx.fillStyle = bodyGrad;
+      path(()=>{
+        ctx.moveTo(380,330);
+        ctx.bezierCurveTo(340,420,360,500,520,520);
+        ctx.bezierCurveTo(700,535,750,460,740,380);
+        ctx.bezierCurveTo(730,310,680,280,620,270);
+        ctx.bezierCurveTo(560,260,430,270,380,330);
+      });
+      ctx.fill();
+
+      // Back stripes
+      ctx.strokeStyle = 'rgba(60,40,30,0.22)'; ctx.lineWidth=6; ctx.lineCap='round';
+      for(let i=0;i<5;i++){
+        path(()=>{
+          ctx.moveTo(450+i*40, 350+i*4);
+          ctx.quadraticCurveTo(460+i*40, 330, 500+i*40, 340+i*6);
+        });
+        ctx.stroke();
+      }
+
+      // Tail (animated sway)
+      const sway = Math.sin(t)*TAIL_SWAY; // -amp..+amp
+      ctx.save();
+      ctx.translate(740,380); // tail root
+      ctx.rotate(sway);
+      ctx.translate(-740,-380);
+
+      const tailGrad = ctx.createLinearGradient(720,360,900,320);
+      tailGrad.addColorStop(0,'#f0d2b1');
+      tailGrad.addColorStop(1,'#a87b53');
+      ctx.fillStyle = tailGrad; ctx.strokeStyle='rgba(60,40,30,0.3)'; ctx.lineWidth=3;
+      path(()=>{
+        ctx.moveTo(740,380);
+        ctx.bezierCurveTo(830,350,900,360,910,330);
+        ctx.bezierCurveTo(920,300,850,290,820,310);
+        ctx.bezierCurveTo(790,330,780,350,770,360);
+        ctx.bezierCurveTo(760,370,750,375,740,380);
+      });
+      ctx.fill(); ctx.stroke();
+
+      // Tail tip darker
+      ctx.fillStyle = 'rgba(80,55,35,0.9)';
+      path(()=>{
+        ctx.moveTo(900,328);
+        ctx.bezierCurveTo(905,320,910,315,915,314);
+        ctx.bezierCurveTo(918,328,908,340,896,342);
+        ctx.bezierCurveTo(895,338,898,332,900,328);
+      });
+      ctx.fill();
+
+      ctx.restore();
+
+      // Front legs (over body)
+      function leg(x){
+        const grad = ctx.createLinearGradient(x,430,x,520);
+        grad.addColorStop(0,'#f0d2b1'); grad.addColorStop(1,'#c99f74');
+        ctx.fillStyle = grad;
+        roundedRect(x-16, 430, 34, 110, 14); ctx.fill();
+        ctx.fillStyle = '#e1c19a'; ellipse(x+1,535,22,10); ctx.fill();
+        ctx.fillStyle = '#794c2b'; ellipse(x-6,535,4,6); ctx.fill(); ellipse(x+6,535,4,6); ctx.fill();
+      }
+      leg(460); leg(520);
+
+      // Back leg (partly behind)
+      ctx.globalAlpha = 0.9;
+      leg(610);
+      ctx.globalAlpha = 1;
+
+      // Chest fluff
+      ctx.fillStyle = '#f7ead7';
+      path(()=>{
+        ctx.moveTo(470,390);
+        ctx.bezierCurveTo(450,420,470,440,490,450);
+        ctx.bezierCurveTo(520,460,540,450,545,430);
+        ctx.bezierCurveTo(520,430,500,410,470,390);
+      });
+      ctx.fill();
+
+      // Head group with slight ear twitch
+      const twitch = Math.sin(t*3)*EAR_TWITCH;
+      ctx.save();
+      ctx.translate(420,300);
+
+      // Neck connection
+      ctx.fillStyle = '#f0d2b1';
+      path(()=>{
+        ctx.moveTo(-20,40);
+        ctx.quadraticCurveTo(10,60,40,70);
+        ctx.quadraticCurveTo(50,50,30,20);
+        ctx.quadraticCurveTo(10,0,-10,10);
+      });
+      ctx.fill();
+
+      // Head base
+      const headGrad = ctx.createLinearGradient(-40,-40,80,120);
+      headGrad.addColorStop(0,'#f0d2b1'); headGrad.addColorStop(1,'#a87b53');
+      ctx.fillStyle = headGrad;
+      ellipse(40,60,90,80, -0.08); ctx.fill();
+
+      // Ears
+      // Left ear (animated tilt)
+      ctx.save(); ctx.translate(-10,6); ctx.rotate(-0.6 + twitch);
+      ctx.fillStyle = '#d9b48a';
+      path(()=>{ ctx.moveTo(0,0); ctx.lineTo(40,-80); ctx.lineTo(65,-10); ctx.quadraticCurveTo(40,0,0,0); }); ctx.fill();
+      ctx.fillStyle = '#ffb9b9'; path(()=>{ ctx.moveTo(18,-16); ctx.lineTo(40,-64); ctx.lineTo(52,-18); ctx.quadraticCurveTo(36,-8,18,-16); }); ctx.fill();
+      ctx.restore();
+
+      // Right ear
+      ctx.save(); ctx.translate(84,12); ctx.rotate(0.55 - twitch*0.5);
+      ctx.fillStyle = '#d9b48a';
+      path(()=>{ ctx.moveTo(0,0); ctx.lineTo(-44,-80); ctx.lineTo(-64,-10); ctx.quadraticCurveTo(-40,0,0,0); }); ctx.fill();
+      ctx.fillStyle = '#ffb9b9'; path(()=>{ ctx.moveTo(-18,-16); ctx.lineTo(-38,-62); ctx.lineTo(-50,-18); ctx.quadraticCurveTo(-34,-8,-18,-16); }); ctx.fill();
+      ctx.restore();
+
+      // Face mask (darker snout area)
+      ctx.fillStyle = 'rgba(190,140,90,0.35)';
+      path(()=>{
+        ctx.moveTo(10,70);
+        ctx.bezierCurveTo(20,90,40,100,60,100);
+        ctx.bezierCurveTo(80,100,100,90,110,72);
+        ctx.quadraticCurveTo(84,70,60,68);
+        ctx.quadraticCurveTo(36,66,10,70);
+      });
+      ctx.fill();
+
+      // Eyes with shimmer
+      function eye(cx,cy,open=1){
+        // sclera
+        ctx.fillStyle = '#dfefff'; ellipse(cx,cy,22,12*open, -0.08); ctx.fill();
+        // iris
+        const ir = ctx.createRadialGradient(cx-2,cy-2,2,cx,cy,12);
+        ir.addColorStop(0,'#a9f7df'); ir.addColorStop(1,'#2bd4a3');
+        ctx.fillStyle = ir; ellipse(cx,cy,12,12*open); ctx.fill();
+        // pupil
+        ctx.fillStyle = '#0b1920'; ellipse(cx,cy,4,8*open); ctx.fill();
+        // highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.9)'; ellipse(cx-4,cy-5,3,3*open); ctx.fill();
+        // bottom shimmer
+        ctx.fillStyle = 'rgba(255,255,255,0.35)'; ellipse(cx+3,cy+4,5,2*open,0.3); ctx.fill();
+      }
+      const blink = (Math.sin(t*2.6 + 1.7) > 0.92) ? 0.2 : 1; // occasional blink
+      eye(34,70,blink);
+      eye(86,74,blink*0.98);
+
+      // Eyebrows / lids
+      ctx.strokeStyle = 'rgba(40,20,10,0.6)'; ctx.lineWidth=3; ctx.lineCap='round';
+      path(()=>{ ctx.moveTo(18,58); ctx.quadraticCurveTo(36,48,58,56); }); ctx.stroke();
+      path(()=>{ ctx.moveTo(70,60); ctx.quadraticCurveTo(92,50,110,60); }); ctx.stroke();
+
+      // Nose
+      ctx.fillStyle = '#ff9aa2'; path(()=>{ ctx.moveTo(58,92); ctx.lineTo(66,92); ctx.quadraticCurveTo(62,100,58,92); }); ctx.fill();
+
+      // Mouth
+      ctx.strokeStyle = '#9d6a5a'; ctx.lineWidth=2;
+      path(()=>{ ctx.moveTo(62,100); ctx.quadraticCurveTo(60,106,54,110); }); ctx.stroke();
+      path(()=>{ ctx.moveTo(62,100); ctx.quadraticCurveTo(64,106,70,110); }); ctx.stroke();
+
+      // Whiskers
+      ctx.strokeStyle = 'rgba(240,240,240,0.9)'; ctx.lineWidth=1.5; ctx.lineCap='round';
+      for(let i=0;i<3;i++){
+        const yy = 90 + i*6;
+        path(()=>{ ctx.moveTo(36,yy); ctx.quadraticCurveTo(10,yy-6, -30, yy-2); }); ctx.stroke();
+        path(()=>{ ctx.moveTo(94,yy+2); ctx.quadraticCurveTo(120,yy-4, 156, yy-0); }); ctx.stroke();
+      }
+
+      // Collar & bell
+      ctx.fillStyle = '#ff6b6b'; roundedRect(0,122,120,14,7); ctx.fill();
+      ctx.fillStyle = '#ffd166'; ellipse(60,136,10,12); ctx.fill();
+      ctx.fillStyle = '#caa34a'; ellipse(60,146,3,3); ctx.fill();
+
+      ctx.restore(); // end head group
+
+      // Foreground grass blades silhouettes
+      ctx.fillStyle = 'rgba(42,58,100,0.7)';
+      for(let i=0;i<20;i++){
+        const gx = (i*55)%1060; const gh = 10 + (i%5)*12;
+        path(()=>{ ctx.moveTo(gx,640); ctx.quadraticCurveTo(gx-6,630-gh,gx-2,620-gh*1.6); ctx.lineTo(gx+6,640); }); ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
