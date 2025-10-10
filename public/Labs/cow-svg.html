@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab - SVG Cow</title>
+  <style>
+    :root{ --bg:#f6f8fb; --ink:#222; --grass:#a8d08d; --cow:#fff; --spot:#333; --nose:#f2b6a0; --bell:#f2c84b; --sky:#cfe8ff; }
+    html,body{height:100%;margin:0;font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--ink);}
+    header{padding:16px 20px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0;}
+    main{max-width:980px;margin:24px auto;padding:0 16px;}
+    .card{background:#fff;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:18px;}
+    svg{width:100%;height:auto;display:block;border-radius:12px;background:linear-gradient(180deg, var(--sky) 0 70%, var(--grass) 70%)}
+    .hint{margin-top:10px;color:#555;font-size:.95rem}
+    a{color:#0b6cff;}
+  </style>
+</head>
+<body>
+  <header>
+    <strong>CMPE 272 Labs</strong> · SVG Demo: Draw a Cow
+    <span style="float:right"><a href="/">Back to Site</a></span>
+  </header>
+  <main>
+    <div class="card">
+      <svg viewBox="0 0 920 520" role="img" aria-label="A cow drawn with inline SVG primitives">
+        <defs>
+          <radialGradient id="noseGrad" cx="50%" cy="40%" r="70%">
+            <stop offset="0%" stop-color="#ffd2c5" />
+            <stop offset="100%" stop-color="#f2b6a0" />
+          </radialGradient>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+            <feOffset dx="0" dy="2" result="offsetblur"/>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Fence -->
+        <g fill="#d8b384">
+          <rect x="40" y="390" width="840" height="16" />
+          <rect x="40" y="430" width="840" height="16" />
+          <g>
+            <rect x="50" y="360" width="22" height="120" rx="6" />
+            <rect x="110" y="360" width="22" height="120" rx="6" />
+            <rect x="170" y="360" width="22" height="120" rx="6" />
+            <rect x="230" y="360" width="22" height="120" rx="6" />
+            <rect x="290" y="360" width="22" height="120" rx="6" />
+            <rect x="350" y="360" width="22" height="120" rx="6" />
+            <rect x="410" y="360" width="22" height="120" rx="6" />
+            <rect x="470" y="360" width="22" height="120" rx="6" />
+            <rect x="530" y="360" width="22" height="120" rx="6" />
+            <rect x="590" y="360" width="22" height="120" rx="6" />
+            <rect x="650" y="360" width="22" height="120" rx="6" />
+            <rect x="710" y="360" width="22" height="120" rx="6" />
+            <rect x="770" y="360" width="22" height="120" rx="6" />
+            <rect x="830" y="360" width="22" height="120" rx="6" />
+          </g>
+        </g>
+
+        <!-- Body -->
+        <g filter="url(#shadow)">
+          <rect x="260" y="240" width="420" height="170" rx="40" fill="#fff" />
+          <ellipse cx="470" cy="355" rx="160" ry="60" fill="#fff"/>
+        </g>
+
+        <!-- Spots -->
+        <ellipse cx="350" cy="320" rx="45" ry="30" fill="#333"/>
+        <ellipse cx="420" cy="275" rx="35" ry="22" fill="#333"/>
+        <ellipse cx="520" cy="310" rx="50" ry="35" fill="#333"/>
+        <ellipse cx="600" cy="285" rx="36" ry="24" fill="#333"/>
+
+        <!-- Tail -->
+        <path d="M660 290 Q 720 260 700 220" fill="none" stroke="#333" stroke-width="6" />
+        <path d="M700 220 Q 710 230 705 240" fill="none" stroke="#333" stroke-width="5" />
+
+        <!-- Legs -->
+        <g>
+          <rect x="310" y="350" width="26" height="110" rx="8" fill="#fff" />
+          <rect x="308" y="445" width="30" height="20" rx="6" fill="#333" />
+          <rect x="380" y="350" width="26" height="110" rx="8" fill="#fff" />
+          <rect x="378" y="445" width="30" height="20" rx="6" fill="#333" />
+          <rect x="540" y="350" width="26" height="110" rx="8" fill="#fff" />
+          <rect x="538" y="445" width="30" height="20" rx="6" fill="#333" />
+          <rect x="610" y="350" width="26" height="110" rx="8" fill="#fff" />
+          <rect x="608" y="445" width="30" height="20" rx="6" fill="#333" />
+        </g>
+
+        <!-- Neck -->
+        <rect x="220" y="280" width="70" height="90" rx="20" fill="#fff" />
+
+        <!-- Head -->
+        <g transform="translate(210 250) rotate(-3.5)">
+          <!-- Face -->
+          <ellipse cx="0" cy="60" rx="80" ry="70" fill="#fff" />
+
+          <!-- Ears -->
+          <ellipse cx="-70" cy="25" rx="24" ry="14" fill="#333"/>
+          <ellipse cx="70" cy="25" rx="24" ry="14" fill="#333"/>
+
+          <!-- Horns -->
+          <ellipse cx="-45" cy="10" rx="10" ry="18" fill="#e5dfcf"/>
+          <ellipse cx="45" cy="10" rx="10" ry="18" fill="#e5dfcf"/>
+
+          <!-- Spots -->
+          <ellipse cx="-25" cy="55" rx="18" ry="12" fill="#333"/>
+
+          <!-- Eyes -->
+          <circle cx="-30" cy="50" r="6" fill="#222"/>
+          <circle cx="30" cy="50" r="6" fill="#222"/>
+
+          <!-- Muzzle -->
+          <rect x="-40" y="85" width="80" height="44" rx="18" fill="url(#noseGrad)"/>
+          <ellipse cx="-15" cy="104" rx="4" ry="6" fill="#a86c5d"/>
+          <ellipse cx="15" cy="104" rx="4" ry="6" fill="#a86c5d"/>
+          <path d="M-10 118 Q 0 124 10 118" fill="none" stroke="#a86c5d" stroke-width="2"/>
+
+          <!-- Collar & Bell -->
+          <rect x="-70" y="80" width="140" height="14" rx="7" fill="#6b8cff"/>
+          <ellipse cx="0" cy="98" rx="12" ry="14" fill="#f2c84b"/>
+          <circle cx="0" cy="112" r="5" fill="#d2a63b"/>
+        </g>
+
+        <!-- Udder & shadow -->
+        <ellipse cx="480" cy="385" rx="28" ry="16" fill="#f2b6a0"/>
+        <ellipse cx="468" cy="398" rx="5" ry="10" fill="#e39e8b"/>
+        <ellipse cx="480" cy="399" rx="5" ry="10" fill="#e39e8b"/>
+        <ellipse cx="492" cy="398" rx="5" ry="10" fill="#e39e8b"/>
+
+        <ellipse cx="470" cy="420" rx="180" ry="20" fill="rgba(0,0,0,0.15)"/>
+      </svg>
+      <p class="hint">This cow is drawn entirely with inline SVG elements (rect, ellipse, path, circle) and basic filters/gradients.</p>
+    </div>
+  </main>
+</body>
+</html>

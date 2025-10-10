@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CMPE 272 Labs</title>
+  <style>
+    :root{ --bg:#f6f8fb; --ink:#222; --card:#fff; }
+    html,body{height:100%;margin:0;font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--ink)}
+    header{padding:16px 20px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.06);position:sticky;top:0}
+    main{max-width:980px;margin:24px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:18px}
+    h1{margin:0 0 8px 0}
+    a.card-link{display:block;text-decoration:none;color:inherit}
+    .card h3{margin:.5rem 0}
+    .card p{color:#555;margin:0}
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.1)}
+  </style>
+</head>
+<body>
+  <header>
+    <strong>CMPE 272 Labs</strong>
+    <span style="float:right"><a href="/">Back to Site</a></span>
+  </header>
+  <main>
+    <h1>Labs Index</h1>
+    <p>HTML5 graphics API exercises. Each page draws a cow without importing any image files.</p>
+    <div class="grid" role="list">
+      <a class="card-link" href="/Labs/cow-canvas.html" role="listitem">
+        <div class="card">
+          <h3>Canvas Cow</h3>
+          <p>Drawn using the Canvas 2D API (paths, arcs, bezier curves).</p>
+        </div>
+      </a>
+      <a class="card-link" href="/Labs/cow-svg.html" role="listitem">
+        <div class="card">
+          <h3>SVG Cow</h3>
+          <p>Drawn using inline SVG (rect, circle, ellipse, path, gradients, filters).</p>
+        </div>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

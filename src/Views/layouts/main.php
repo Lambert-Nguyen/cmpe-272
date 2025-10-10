@@ -56,6 +56,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link modern-nav-link" href="/Labs/">
+                            <i class="fas fa-flask me-1"></i>Labs
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link modern-nav-link" href="/company/contacts">
                             <i class="fas fa-phone me-1"></i>Contacts
                         </a>
