@@ -1,0 +1,15 @@
+Mary Smith|mary.smith@example.com|Premium User|Active|2024-01-15
+John Wang|john.wang@example.com|Standard User|Active|2024-02-20
+Alex Bington|alex.bington@example.com|Premium User|Active|2024-03-10
+Sarah Johnson|sarah.johnson@example.com|Standard User|Active|2024-03-25
+Michael Chen|michael.chen@example.com|Premium User|Inactive|2024-04-05
+Emily Davis|emily.davis@example.com|Standard User|Active|2024-04-18
+David Martinez|david.martinez@example.com|Premium User|Active|2024-05-02
+Lisa Anderson|lisa.anderson@example.com|Standard User|Active|2024-05-20
+James Wilson|james.wilson@example.com|Premium User|Active|2024-06-08
+Jennifer Taylor|jennifer.taylor@example.com|Standard User|Active|2024-06-25
+Robert Brown|robert.brown@example.com|Premium User|Active|2024-07-12
+Amanda Garcia|amanda.garcia@example.com|Standard User|Inactive|2024-07-30
+Christopher Lee|christopher.lee@example.com|Premium User|Active|2024-08-15
+Jessica Miller|jessica.miller@example.com|Standard User|Active|2024-09-01
+Daniel Rodriguez|daniel.rodriguez@example.com|Premium User|Active|2024-09-20

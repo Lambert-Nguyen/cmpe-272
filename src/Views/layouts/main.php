@@ -74,6 +74,19 @@
                             <li><a class="dropdown-item" href="/users"><i class="fas fa-users me-2"></i>Users</a></li>
                         </ul>
                     </li>
+                    <?php if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link text-warning" href="/admin/users">
+                                <i class="fas fa-shield-halved me-1"></i>Admin
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="/admin/login">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

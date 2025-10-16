@@ -1,5 +1,8 @@
 <?php
 
+// Start session for authentication
+session_start();
+
 // Enable error reporting for development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -9,6 +12,7 @@ require_once __DIR__ . '/../config/Router.php';
 require_once __DIR__ . '/../src/Controllers/HomeController.php';
 require_once __DIR__ . '/../src/Controllers/UserController.php';
 require_once __DIR__ . '/../src/Controllers/CompanyController.php';
+require_once __DIR__ . '/../src/Controllers/AdminController.php';
 
 // Initialize the router
 $router = new Router();
@@ -19,6 +23,12 @@ $router->addRoute('GET', '/company/about', 'CompanyController', 'about');
 $router->addRoute('GET', '/company/products', 'CompanyController', 'products');
 $router->addRoute('GET', '/company/news', 'CompanyController', 'news');
 $router->addRoute('GET', '/company/contacts', 'CompanyController', 'contacts');
+
+// Admin routes (secure section)
+$router->addRoute('GET', '/admin/login', 'AdminController', 'login');
+$router->addRoute('POST', '/admin/login', 'AdminController', 'login');
+$router->addRoute('GET', '/admin/logout', 'AdminController', 'logout');
+$router->addRoute('GET', '/admin/users', 'AdminController', 'users');
 
 // Legacy routes (CMPE 272 app)
 $router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage
