@@ -13,6 +13,7 @@ require_once __DIR__ . '/../src/Controllers/HomeController.php';
 require_once __DIR__ . '/../src/Controllers/UserController.php';
 require_once __DIR__ . '/../src/Controllers/CompanyController.php';
 require_once __DIR__ . '/../src/Controllers/AdminController.php';
+require_once __DIR__ . '/../src/Controllers/ProductController.php';
 
 // Initialize the router
 $router = new Router();
@@ -29,6 +30,11 @@ $router->addRoute('GET', '/admin/login', 'AdminController', 'login');
 $router->addRoute('POST', '/admin/login', 'AdminController', 'login');
 $router->addRoute('GET', '/admin/logout', 'AdminController', 'logout');
 $router->addRoute('GET', '/admin/users', 'AdminController', 'users');
+
+// Product routes (cookie tracking)
+$router->addRoute('GET', '/products/show', 'ProductController', 'show');
+$router->addRoute('GET', '/products/recently-visited', 'ProductController', 'recentlyVisited');
+$router->addRoute('GET', '/products/most-visited', 'ProductController', 'mostVisited');
 
 // Legacy routes (CMPE 272 app)
 $router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage

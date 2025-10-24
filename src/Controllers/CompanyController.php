@@ -46,53 +46,15 @@ class CompanyController extends Controller {
     }
     
     public function products() {
+        // Get all products from ProductController
+        require_once __DIR__ . '/ProductController.php';
+        $productController = new ProductController();
+        $allProducts = $productController->getAllProducts();
+        
         $data = [
             'title' => 'Products & Services - Lambert Nguyen Company',
             'company_name' => 'Lambert Nguyen Company',
-            'services' => [
-                [
-                    'name' => 'Custom Software Development',
-                    'icon' => 'fas fa-code',
-                    'description' => 'Tailored software solutions built with modern technologies like PHP, Python, Java, and JavaScript frameworks.',
-                    'features' => ['Web Applications', 'Mobile Apps', 'Desktop Software', 'API Development'],
-                    'price_range' => '$10,000 - $100,000+'
-                ],
-                [
-                    'name' => 'Cloud Migration Services',
-                    'icon' => 'fas fa-cloud',
-                    'description' => 'Seamless migration to cloud platforms including AWS, Azure, and Google Cloud with zero downtime.',
-                    'features' => ['Infrastructure Assessment', 'Migration Planning', 'Implementation', '24/7 Support'],
-                    'price_range' => '$5,000 - $50,000+'
-                ],
-                [
-                    'name' => 'Digital Transformation Consulting',
-                    'icon' => 'fas fa-chart-line',
-                    'description' => 'Strategic guidance to modernize your business processes and technology infrastructure.',
-                    'features' => ['Process Analysis', 'Technology Roadmap', 'Change Management', 'Training'],
-                    'price_range' => '$15,000 - $75,000+'
-                ],
-                [
-                    'name' => 'AI & Machine Learning Solutions',
-                    'icon' => 'fas fa-brain',
-                    'description' => 'Intelligent automation and data analytics solutions to enhance decision-making.',
-                    'features' => ['Predictive Analytics', 'Chatbots', 'Process Automation', 'Data Visualization'],
-                    'price_range' => '$20,000 - $150,000+'
-                ],
-                [
-                    'name' => 'Enterprise Integration',
-                    'icon' => 'fas fa-plug',
-                    'description' => 'Connect disparate systems and streamline workflows with robust integration solutions.',
-                    'features' => ['API Integration', 'Legacy System Modernization', 'Data Synchronization', 'Workflow Automation'],
-                    'price_range' => '$8,000 - $60,000+'
-                ],
-                [
-                    'name' => 'Technical Support & Maintenance',
-                    'icon' => 'fas fa-tools',
-                    'description' => 'Ongoing support and maintenance services to keep your systems running smoothly.',
-                    'features' => ['24/7 Monitoring', 'Bug Fixes', 'Performance Optimization', 'Security Updates'],
-                    'price_range' => '$1,000 - $10,000/month'
-                ]
-            ]
+            'products' => $allProducts
         ];
         
         $this->render('company/products', $data);
