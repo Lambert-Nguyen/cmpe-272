@@ -11,9 +11,8 @@ class CombinedUsersController extends Controller {
         // Partner company URLs (you'll need to get these from your teammates)
         // Replace these with actual URLs from your group members
         $partnerCompanies = [
-            // Add your group members' URLs here
-            // Example:
-            // 'Company B' => 'https://company-b-url.com/api/users',
+            'Anukrithima Yadala Company' => 'https://anukrithimyadala.42web.io/users_api.php',
+            // Add more partners here if you have a 3rd member
             // 'Company C' => 'https://company-c-url.com/api/users',
         ];
         

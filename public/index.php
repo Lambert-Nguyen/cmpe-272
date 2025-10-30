@@ -40,6 +40,7 @@ $router->addRoute('GET', '/products/most-visited', 'ProductController', 'mostVis
 // Combined Users routes (CURL integration)
 $router->addRoute('GET', '/combined-users', 'CombinedUsersController', 'index');
 $router->addRoute('GET', '/api/users', 'CombinedUsersController', 'api');
+$router->addRoute('GET', '/test-connection', 'CombinedUsersController', 'testConnection');
 
 // Legacy routes (CMPE 272 app)
 $router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage
