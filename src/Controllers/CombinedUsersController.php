@@ -134,11 +134,14 @@ class CombinedUsersController extends Controller {
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // 10 second timeout
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For development (remove in production)
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15); // 15 second timeout
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // 10 second connection timeout
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification for development
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Disable SSL host verification
+        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2); // Use TLS 1.2
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Accept: application/json',
-            'User-Agent: Lambert-Nguyen-Company-CURL/1.0'
+            'User-Agent: Mozilla/5.0 (compatible; Lambert-Nguyen-Company-CURL/1.0)'
         ]);
         
         // Execute CURL request
@@ -153,11 +156,37 @@ class CombinedUsersController extends Controller {
         if ($response && $httpCode === 200) {
             $data = json_decode($response, true);
             
-            if ($data && isset($data['success']) && $data['success']) {
+            if ($data) {
+                // Handle different JSON response formats
+                $users = [];
+                
+                // Format 1: Direct array of users [{"name": "...", "role": "..."}, ...]
+                if (isset($data[0]) && is_array($data[0])) {
+                    $users = $data;
+                    // Normalize the format - ensure each user has required fields
+                    $users = array_map(function($user) {
+                        return [
+                            'name' => $user['name'] ?? 'Unknown',
+                            'email' => $user['email'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'N/A',
+                            'status' => $user['status'] ?? 'Active',
+                            'join_date' => $user['join_date'] ?? date('Y-m-d')
+                        ];
+                    }, $users);
+                }
+                // Format 2: Object with users array {"success": true, "users": [...]}
+                elseif (isset($data['users']) && is_array($data['users'])) {
+                    $users = $data['users'];
+                }
+                // Format 3: Object with data array {"data": [...]}
+                elseif (isset($data['data']) && is_array($data['data'])) {
+                    $users = $data['data'];
+                }
+                
                 return [
                     'name' => $data['company'] ?? $companyName,
                     'url' => $data['url'] ?? $apiUrl,
-                    'users' => $data['users'] ?? [],
+                    'users' => $users,
                     'source' => 'remote',
                     'status' => 'success',
                     'timestamp' => $data['timestamp'] ?? null,

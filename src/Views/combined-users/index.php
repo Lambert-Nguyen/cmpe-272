@@ -117,9 +117,13 @@
                                     <td><?php echo $userIndex + 1; ?></td>
                                     <td><strong><?php echo htmlspecialchars($user['name']); ?></strong></td>
                                     <td>
-                                        <a href="mailto:<?php echo htmlspecialchars($user['email']); ?>" class="email-link">
-                                            <?php echo htmlspecialchars($user['email']); ?>
-                                        </a>
+                                        <?php if (isset($user['email']) && $user['email'] !== 'N/A'): ?>
+                                            <a href="mailto:<?php echo htmlspecialchars($user['email']); ?>" class="email-link">
+                                                <?php echo htmlspecialchars($user['email']); ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="text-muted">N/A</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if (strpos($user['role'], 'Premium') !== false): ?>
@@ -128,7 +132,7 @@
                                             </span>
                                         <?php else: ?>
                                             <span class="badge bg-secondary">
-                                                <i class="fas fa-user me-1"></i>Standard
+                                                <i class="fas fa-briefcase me-1"></i><?php echo htmlspecialchars($user['role']); ?>
                                             </span>
                                         <?php endif; ?>
                                     </td>
