@@ -72,6 +72,8 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/about"><i class="fas fa-info-circle me-2"></i>About Course</a></li>
                             <li><a class="dropdown-item" href="/users"><i class="fas fa-users me-2"></i>Users</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/combined-users"><i class="fas fa-network-wired me-2"></i>Combined Users</a></li>
                         </ul>
                     </li>
                     <?php if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>

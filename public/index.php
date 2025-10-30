@@ -14,6 +14,7 @@ require_once __DIR__ . '/../src/Controllers/UserController.php';
 require_once __DIR__ . '/../src/Controllers/CompanyController.php';
 require_once __DIR__ . '/../src/Controllers/AdminController.php';
 require_once __DIR__ . '/../src/Controllers/ProductController.php';
+require_once __DIR__ . '/../src/Controllers/CombinedUsersController.php';
 
 // Initialize the router
 $router = new Router();
@@ -35,6 +36,10 @@ $router->addRoute('GET', '/admin/users', 'AdminController', 'users');
 $router->addRoute('GET', '/products/show', 'ProductController', 'show');
 $router->addRoute('GET', '/products/recently-visited', 'ProductController', 'recentlyVisited');
 $router->addRoute('GET', '/products/most-visited', 'ProductController', 'mostVisited');
+
+// Combined Users routes (CURL integration)
+$router->addRoute('GET', '/combined-users', 'CombinedUsersController', 'index');
+$router->addRoute('GET', '/api/users', 'CombinedUsersController', 'api');
 
 // Legacy routes (CMPE 272 app)
 $router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage
