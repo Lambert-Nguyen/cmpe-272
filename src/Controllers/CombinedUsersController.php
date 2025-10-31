@@ -11,10 +11,9 @@ class CombinedUsersController extends Controller {
         // Partner company URLs (you'll need to get these from your teammates)
         // Replace these with actual URLs from your group members
         $partnerCompanies = [
-            // Note: 42web.io blocks server-to-server requests, so using manual data entry
+            'Partner Company (Render)' => 'https://php-mysql-hosting-project.onrender.com/api/local_users.php',
+            // Note: 42web.io blocks server-to-server requests, so using manual data entry below
             // 'Anukrithima Yadala Company' => 'http://anukrithimyadala.42web.io/users_api.php',
-            // Add more partners here if you have a 3rd member
-            // 'Company C' => 'https://company-c-url.com/api/users',
         ];
         
         // Manual partner data (for services that block CURL/server requests)
@@ -307,16 +306,36 @@ class CombinedUsersController extends Controller {
                 // Format 2: Object with users array {"success": true, "users": [...]}
                 elseif (is_array($data) && isset($data['users']) && is_array($data['users'])) {
                     $users = $data['users'];
+                    // Normalize the users
+                    $users = array_map(function($user) {
+                        return [
+                            'name' => $user['name'] ?? 'Unknown',
+                            'email' => $user['email'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'Member',
+                            'status' => $user['status'] ?? 'Active',
+                            'join_date' => $user['join_date'] ?? date('Y-m-d')
+                        ];
+                    }, $users);
                 }
                 // Format 3: Object with data array {"data": [...]}
                 elseif (is_array($data) && isset($data['data']) && is_array($data['data'])) {
                     $users = $data['data'];
+                    // Normalize the users
+                    $users = array_map(function($user) {
+                        return [
+                            'name' => $user['name'] ?? 'Unknown',
+                            'email' => $user['email'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'Member',
+                            'status' => $user['status'] ?? 'Active',
+                            'join_date' => $user['join_date'] ?? date('Y-m-d')
+                        ];
+                    }, $users);
                 }
                 
                 // If we successfully parsed users, return success
                 if (!empty($users)) {
                     return [
-                        'name' => $data['company'] ?? $companyName,
+                        'name' => $data['name'] ?? $data['company'] ?? $companyName,
                         'url' => $data['url'] ?? $apiUrl,
                         'users' => $users,
                         'source' => 'remote',
