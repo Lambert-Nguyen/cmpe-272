@@ -11,7 +11,7 @@ class CombinedUsersController extends Controller {
         // Partner company URLs (you'll need to get these from your teammates)
         // Replace these with actual URLs from your group members
         $partnerCompanies = [
-            'Anukrithima Yadala Company' => 'https://anukrithimyadala.42web.io/users_api.php',
+            'Anukrithima Yadala Company' => 'http://anukrithimyadala.42web.io/users_api.php',
             // Add more partners here if you have a 3rd member
             // 'Company C' => 'https://company-c-url.com/api/users',
         ];
@@ -130,18 +130,25 @@ class CombinedUsersController extends Controller {
         // Initialize CURL
         $ch = curl_init();
         
-        // Set CURL options
+        // Set CURL options for maximum compatibility
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15); // 15 second timeout
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // 10 second connection timeout
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification for development
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 20); // 20 second timeout
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15); // 15 second connection timeout
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Disable SSL host verification
-        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2); // Use TLS 1.2
+        curl_setopt($ch, CURLOPT_ENCODING, ''); // Accept any encoding
+        curl_setopt($ch, CURLOPT_FRESH_CONNECT, true); // Force new connection
+        curl_setopt($ch, CURLOPT_FORBID_REUSE, true); // Don't reuse connections
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1); // Use HTTP 1.1
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Accept: application/json',
-            'User-Agent: Mozilla/5.0 (compatible; Lambert-Nguyen-Company-CURL/1.0)'
+            'Accept: application/json, text/html, */*',
+            'Accept-Language: en-US,en;q=0.9',
+            'Cache-Control: no-cache',
+            'Connection: close',
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         ]);
         
         // Execute CURL request
