@@ -11,9 +11,51 @@ class CombinedUsersController extends Controller {
         // Partner company URLs (you'll need to get these from your teammates)
         // Replace these with actual URLs from your group members
         $partnerCompanies = [
-            'Anukrithima Yadala Company' => 'http://anukrithimyadala.42web.io/users_api.php',
+            // Note: 42web.io blocks server-to-server requests, so using manual data entry
+            // 'Anukrithima Yadala Company' => 'http://anukrithimyadala.42web.io/users_api.php',
             // Add more partners here if you have a 3rd member
             // 'Company C' => 'https://company-c-url.com/api/users',
+        ];
+        
+        // Manual partner data (for services that block CURL/server requests)
+        // You can copy the JSON response from your partner's API and paste it here
+        $manualPartnerData = [
+            [
+                'name' => 'PureBite Beauty',
+                'url' => 'https://anukrithimyadala.42web.io',
+                'users' => [
+                    [
+                        'name' => 'Mary Smith',
+                        'email' => 'mary.smith@purebitebeauty.com',
+                        'role' => 'Marketing Lead',
+                        'status' => 'Active',
+                        'join_date' => '2024-01-10'
+                    ],
+                    [
+                        'name' => 'John Wang',
+                        'email' => 'john.wang@purebitebeauty.com',
+                        'role' => 'Product Designer',
+                        'status' => 'Active',
+                        'join_date' => '2024-02-14'
+                    ],
+                    [
+                        'name' => 'Alex Bington',
+                        'email' => 'alex.bington@purebitebeauty.com',
+                        'role' => 'Software Engineer',
+                        'status' => 'Active',
+                        'join_date' => '2024-03-20'
+                    ],
+                    [
+                        'name' => 'Emily Stone',
+                        'email' => 'emily.stone@purebitebeauty.com',
+                        'role' => 'Sales Associate',
+                        'status' => 'Inactive',
+                        'join_date' => '2024-04-05'
+                    ]
+                ],
+                'source' => 'manual',
+                'status' => 'success'
+            ]
         ];
         
         // Get local users (Company A - your company)
@@ -32,6 +74,11 @@ class CombinedUsersController extends Controller {
                 'status' => 'success'
             ]
         ];
+        
+        // Add manual partner data
+        foreach ($manualPartnerData as $partnerData) {
+            $allCompanies[] = $partnerData;
+        }
         
         // Add remote company data
         $allCompanies = array_merge($allCompanies, $remoteUsers);

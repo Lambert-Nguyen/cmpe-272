@@ -82,6 +82,10 @@
                                 <span class="badge bg-primary badge-lg ms-2">
                                     <i class="fas fa-database me-1"></i>Local DB
                                 </span>
+                            <?php elseif ($company['source'] === 'manual'): ?>
+                                <span class="badge bg-warning badge-lg ms-2">
+                                    <i class="fas fa-hand-paper me-1"></i>Manual Entry
+                                </span>
                             <?php else: ?>
                                 <span class="badge bg-info badge-lg ms-2">
                                     <i class="fas fa-exchange-alt me-1"></i>CURL
@@ -184,12 +188,15 @@
         <div class="info-box" data-aos="fade-up">
             <div class="row">
                 <div class="col-md-8">
-                    <h4><i class="fas fa-code me-2"></i>How CURL Integration Works</h4>
+                    <h4><i class="fas fa-code me-2"></i>How Multi-Company Integration Works</h4>
                     <p class="mb-2">
                         <strong>Local Data:</strong> Fetched directly from local database using PHP file operations.
                     </p>
                     <p class="mb-2">
-                        <strong>Remote Data:</strong> Retrieved from partner companies using PHP CURL requests to their API endpoints.
+                        <strong>Remote Data (CURL):</strong> Retrieved from partner companies using PHP CURL requests to their API endpoints.
+                    </p>
+                    <p class="mb-2">
+                        <strong>Manual Entry:</strong> For services with anti-bot protection (like 42web.io free hosting), data is manually copied from the partner's API response and entered into the controller.
                     </p>
                     <p class="mb-0">
                         <strong>API Endpoint:</strong> <code><?php echo htmlspecialchars($_SERVER['HTTP_HOST']); ?>/api/users</code>
