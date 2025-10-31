@@ -127,6 +127,65 @@ class CombinedUsersController extends Controller {
      * Fetch users from a remote company using CURL
      */
     private function fetchUsersViaCurl($companyName, $apiUrl) {
+        // First, try file_get_contents (sometimes works better with free hosting)
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => "Accept: application/json\r\n" .
+                           "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\r\n",
+                'timeout' => 15,
+                'ignore_errors' => true
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false
+            ]
+        ]);
+        
+        $response = @file_get_contents($apiUrl, false, $context);
+        
+        // If file_get_contents worked, try to parse it
+        if ($response !== false) {
+            $response = trim($response);
+            $response = preg_replace('/^\xEF\xBB\xBF/', '', $response); // Remove UTF-8 BOM
+            
+            $data = @json_decode($response, true);
+            
+            if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
+                // Successfully got JSON data
+                $users = [];
+                
+                if (is_array($data) && isset($data[0])) {
+                    $users = array_map(function($user) {
+                        return [
+                            'name' => $user['name'] ?? 'Unknown',
+                            'email' => $user['email'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'N/A',
+                            'status' => $user['status'] ?? 'Active',
+                            'join_date' => $user['join_date'] ?? date('Y-m-d')
+                        ];
+                    }, $data);
+                } elseif (is_array($data) && isset($data['users'])) {
+                    $users = $data['users'];
+                } elseif (is_array($data) && isset($data['data'])) {
+                    $users = $data['data'];
+                }
+                
+                if (!empty($users)) {
+                    return [
+                        'name' => $companyName,
+                        'url' => $apiUrl,
+                        'users' => $users,
+                        'source' => 'remote',
+                        'status' => 'success',
+                        'timestamp' => date('c'),
+                        'http_code' => 200
+                    ];
+                }
+            }
+        }
+        
+        // If file_get_contents failed or didn't return valid JSON, try CURL
         // Initialize CURL
         $ch = curl_init();
         
