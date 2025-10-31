@@ -161,14 +161,31 @@ class CombinedUsersController extends Controller {
         
         // Check if request was successful
         if ($response && $httpCode === 200) {
+            // Clean up the response (remove BOM and whitespace)
+            $response = trim($response);
+            $response = preg_replace('/^\xEF\xBB\xBF/', '', $response); // Remove UTF-8 BOM
+            
             $data = json_decode($response, true);
             
-            if ($data) {
+            // Check for JSON decode errors
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return [
+                    'name' => $companyName,
+                    'url' => $apiUrl,
+                    'users' => [],
+                    'source' => 'remote',
+                    'status' => 'error',
+                    'error_message' => 'Invalid JSON response: ' . json_last_error_msg() . '. Response: ' . substr($response, 0, 200),
+                    'http_code' => $httpCode
+                ];
+            }
+            
+            if ($data !== null) {
                 // Handle different JSON response formats
                 $users = [];
                 
                 // Format 1: Direct array of users [{"name": "...", "role": "..."}, ...]
-                if (isset($data[0]) && is_array($data[0])) {
+                if (is_array($data) && isset($data[0])) {
                     $users = $data;
                     // Normalize the format - ensure each user has required fields
                     $users = array_map(function($user) {
@@ -182,23 +199,26 @@ class CombinedUsersController extends Controller {
                     }, $users);
                 }
                 // Format 2: Object with users array {"success": true, "users": [...]}
-                elseif (isset($data['users']) && is_array($data['users'])) {
+                elseif (is_array($data) && isset($data['users']) && is_array($data['users'])) {
                     $users = $data['users'];
                 }
                 // Format 3: Object with data array {"data": [...]}
-                elseif (isset($data['data']) && is_array($data['data'])) {
+                elseif (is_array($data) && isset($data['data']) && is_array($data['data'])) {
                     $users = $data['data'];
                 }
                 
-                return [
-                    'name' => $data['company'] ?? $companyName,
-                    'url' => $data['url'] ?? $apiUrl,
-                    'users' => $users,
-                    'source' => 'remote',
-                    'status' => 'success',
-                    'timestamp' => $data['timestamp'] ?? null,
-                    'http_code' => $httpCode
-                ];
+                // If we successfully parsed users, return success
+                if (!empty($users)) {
+                    return [
+                        'name' => $data['company'] ?? $companyName,
+                        'url' => $data['url'] ?? $apiUrl,
+                        'users' => $users,
+                        'source' => 'remote',
+                        'status' => 'success',
+                        'timestamp' => $data['timestamp'] ?? null,
+                        'http_code' => $httpCode
+                    ];
+                }
             }
         }
         
