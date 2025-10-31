@@ -206,20 +206,38 @@ class CombinedUsersController extends Controller {
                         return [
                             'name' => $user['name'] ?? 'Unknown',
                             'email' => $user['email'] ?? 'N/A',
-                            'role' => $user['role'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'Member',
                             'status' => $user['status'] ?? 'Active',
                             'join_date' => $user['join_date'] ?? date('Y-m-d')
                         ];
                     }, $data);
                 } elseif (is_array($data) && isset($data['users'])) {
-                    $users = $data['users'];
+                    // Normalize users array
+                    $users = array_map(function($user) {
+                        return [
+                            'name' => $user['name'] ?? 'Unknown',
+                            'email' => $user['email'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'Member',
+                            'status' => $user['status'] ?? 'Active',
+                            'join_date' => $user['join_date'] ?? date('Y-m-d')
+                        ];
+                    }, $data['users']);
                 } elseif (is_array($data) && isset($data['data'])) {
-                    $users = $data['data'];
+                    // Normalize data array
+                    $users = array_map(function($user) {
+                        return [
+                            'name' => $user['name'] ?? 'Unknown',
+                            'email' => $user['email'] ?? 'N/A',
+                            'role' => $user['role'] ?? 'Member',
+                            'status' => $user['status'] ?? 'Active',
+                            'join_date' => $user['join_date'] ?? date('Y-m-d')
+                        ];
+                    }, $data['data']);
                 }
                 
                 if (!empty($users)) {
                     return [
-                        'name' => $companyName,
+                        'name' => isset($data['name']) ? $data['name'] : (isset($data['company']) ? $data['company'] : $companyName),
                         'url' => $apiUrl,
                         'users' => $users,
                         'source' => 'remote',

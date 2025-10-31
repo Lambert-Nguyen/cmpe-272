@@ -130,18 +130,24 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php if (strpos($user['role'], 'Premium') !== false): ?>
+                                        <?php 
+                                        $role = $user['role'] ?? 'Member';
+                                        if (strpos($role, 'Premium') !== false): 
+                                        ?>
                                             <span class="badge bg-warning text-dark">
                                                 <i class="fas fa-crown me-1"></i>Premium
                                             </span>
                                         <?php else: ?>
                                             <span class="badge bg-secondary">
-                                                <i class="fas fa-briefcase me-1"></i><?php echo htmlspecialchars($user['role']); ?>
+                                                <i class="fas fa-briefcase me-1"></i><?php echo htmlspecialchars($role); ?>
                                             </span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php if ($user['status'] === 'Active'): ?>
+                                        <?php 
+                                        $status = $user['status'] ?? 'Active';
+                                        if ($status === 'Active'): 
+                                        ?>
                                             <span class="badge bg-success">
                                                 <i class="fas fa-check-circle me-1"></i>Active
                                             </span>
@@ -151,7 +157,7 @@
                                             </span>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?php echo htmlspecialchars($user['join_date']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['join_date'] ?? date('Y-m-d')); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
