@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($title ?? 'CMPE 272 PHP App'); ?></title>
+    <title><?php echo htmlspecialchars($title ?? 'Enterprise Marketplace | CMPE 272'); ?></title>
     
     <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -27,8 +27,8 @@
     <nav class="navbar navbar-expand-lg modern-navbar fixed-top" data-aos="fade-down">
         <div class="container">
             <a class="navbar-brand modern-brand" href="/">
-                <i class="fas fa-building me-2"></i>
-                <span class="brand-text">Lambert Nguyen Company</span>
+                <i class="fas fa-store me-2"></i>
+                <span class="brand-text">Enterprise Marketplace</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -36,56 +36,73 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/">
-                            <i class="fas fa-home me-1"></i>Home
+                        <a class="nav-link modern-nav-link" href="/marketplace">
+                            <i class="fas fa-store me-1"></i>Marketplace
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/company/about">
-                            <i class="fas fa-info-circle me-1"></i>About
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/company/products">
-                            <i class="fas fa-cogs me-1"></i>Services
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/company/news">
-                            <i class="fas fa-newspaper me-1"></i>News
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/Labs/">
-                            <i class="fas fa-flask me-1"></i>Labs
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link modern-nav-link" href="/company/contacts">
-                            <i class="fas fa-phone me-1"></i>Contacts
+                        <a class="nav-link modern-nav-link" href="/marketplace/companies">
+                            <i class="fas fa-building me-1"></i>Companies
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-tools me-1"></i>CMPE 272
+                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" id="topProductsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-trophy me-1"></i>Top Products
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/about"><i class="fas fa-info-circle me-2"></i>About Course</a></li>
-                            <li><a class="dropdown-item" href="/users"><i class="fas fa-users me-2"></i>Users</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/combined-users"><i class="fas fa-network-wired me-2"></i>Combined Users</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="topProductsDropdown">
+                            <li><a class="dropdown-item" href="/marketplace/top5"><i class="fas fa-star me-2"></i>Marketplace Top 5</a></li>
+                            <li><a class="dropdown-item" href="/marketplace/company-top5"><i class="fas fa-building me-2"></i>Top 5 by Company</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle modern-nav-link" href="#" id="companyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-briefcase me-1"></i>Company
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="companyDropdown">
+                            <li><a class="dropdown-item" href="/company/about"><i class="fas fa-info-circle me-2"></i>About</a></li>
+                            <li><a class="dropdown-item" href="/company/products"><i class="fas fa-cogs me-2"></i>Services</a></li>
+                            <li><a class="dropdown-item" href="/company/news"><i class="fas fa-newspaper me-2"></i>News</a></li>
+                            <li><a class="dropdown-item" href="/company/contacts"><i class="fas fa-phone me-2"></i>Contacts</a></li>
+                        </ul>
+                    </li>
+                    <?php
+                    require_once __DIR__ . '/../../Controllers/AuthController.php';
+                    $isLoggedIn = AuthController::isLoggedIn();
+                    $currentUser = AuthController::getCurrentUser();
+                    ?>
+                    <?php if ($isLoggedIn): ?>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="/marketplace/wishlist">
+                                <i class="fas fa-heart me-1"></i>Wishlist
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle modern-nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i><?= htmlspecialchars($currentUser['username']) ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                                <li><a class="dropdown-item" href="/marketplace/wishlist"><i class="fas fa-heart me-2"></i>My Wishlist</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="/login">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link btn btn-primary text-white" href="/register">
+                                <i class="fas fa-user-plus me-1"></i>Register
+                            </a>
+                        </li>
+                    <?php endif; ?>
                     <?php if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
                         <li class="nav-item">
                             <a class="nav-link modern-nav-link text-warning" href="/admin/users">
                                 <i class="fas fa-shield-halved me-1"></i>Admin
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link modern-nav-link" href="/admin/login">
-                                <i class="fas fa-sign-in-alt me-1"></i>Login
                             </a>
                         </li>
                     <?php endif; ?>
