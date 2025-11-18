@@ -1,6 +1,10 @@
 <?php
 
 abstract class Controller {
+    public function __construct() {
+        // Base constructor - can be overridden by child classes
+    }
+
     protected function render($view, $data = []) {
         // Extract data array to variables
         extract($data);
