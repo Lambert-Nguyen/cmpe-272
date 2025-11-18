@@ -15,6 +15,8 @@ require_once __DIR__ . '/../src/Controllers/CompanyController.php';
 require_once __DIR__ . '/../src/Controllers/AdminController.php';
 require_once __DIR__ . '/../src/Controllers/ProductController.php';
 require_once __DIR__ . '/../src/Controllers/CombinedUsersController.php';
+require_once __DIR__ . '/../src/Controllers/AuthController.php';
+require_once __DIR__ . '/../src/Controllers/MarketplaceController.php';
 
 // Initialize the router
 $router = new Router();
@@ -42,11 +44,37 @@ $router->addRoute('GET', '/combined-users', 'CombinedUsersController', 'index');
 $router->addRoute('GET', '/api/users', 'CombinedUsersController', 'api');
 $router->addRoute('GET', '/test-connection', 'CombinedUsersController', 'testConnection');
 
+// Authentication routes
+$router->addRoute('GET', '/login', 'AuthController', 'login');
+$router->addRoute('POST', '/login', 'AuthController', 'login');
+$router->addRoute('GET', '/register', 'AuthController', 'register');
+$router->addRoute('POST', '/register', 'AuthController', 'register');
+$router->addRoute('GET', '/logout', 'AuthController', 'logout');
+
+// Marketplace routes (main marketplace features)
+$router->addRoute('GET', '/marketplace', 'MarketplaceController', 'index');
+$router->addRoute('GET', '/marketplace/product', 'MarketplaceController', 'product');
+$router->addRoute('GET', '/marketplace/top5', 'MarketplaceController', 'top5');
+$router->addRoute('GET', '/marketplace/company-top5', 'MarketplaceController', 'companyTop5');
+$router->addRoute('GET', '/marketplace/companies', 'MarketplaceController', 'companies');
+
+// Review routes (require authentication)
+$router->addRoute('POST', '/marketplace/review/submit', 'MarketplaceController', 'submitReview');
+$router->addRoute('POST', '/marketplace/review/update', 'MarketplaceController', 'updateReview');
+$router->addRoute('POST', '/marketplace/review/delete', 'MarketplaceController', 'deleteReview');
+
+// Wishlist routes (require authentication)
+$router->addRoute('POST', '/marketplace/wishlist/toggle', 'MarketplaceController', 'toggleWishlist');
+$router->addRoute('GET', '/marketplace/wishlist', 'MarketplaceController', 'wishlist');
+
+// User profile routes (require authentication)
+$router->addRoute('GET', '/profile', 'MarketplaceController', 'profile');
+
 // Legacy routes (CMPE 272 app)
-$router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage
+$router->addRoute('GET', '/', 'MarketplaceController', 'index'); // Changed to marketplace homepage
 $router->addRoute('GET', '/about', 'HomeController', 'about');
 
-// User routes
+// User routes (admin management)
 $router->addRoute('GET', '/users', 'UserController', 'index');
 $router->addRoute('GET', '/users/create', 'UserController', 'create');
 $router->addRoute('POST', '/users/create', 'UserController', 'create');
