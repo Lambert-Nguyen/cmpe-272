@@ -11,11 +11,17 @@ class Database {
     public function __construct() {
         // Use environment variables for database configuration
         // These will be set in Render's environment
-        $this->host = $_ENV['DB_HOST'] ?? 'localhost';
-        $this->database = $_ENV['DB_NAME'] ?? 'cmpe272_app';
-        $this->username = $_ENV['DB_USER'] ?? 'root';
-        $this->password = $_ENV['DB_PASSWORD'] ?? '';
-        $this->port = $_ENV['DB_PORT'] ?? 3306;
+        // Use getenv() for better compatibility with different hosting environments
+        $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost');
+
+        // Convert 'localhost' to '127.0.0.1' to force TCP connection
+        // This avoids "No such file or directory" socket errors
+        $this->host = ($host === 'localhost') ? '127.0.0.1' : $host;
+
+        $this->database = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'cmpe272_app');
+        $this->username = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'root');
+        $this->password = getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? '');
+        $this->port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? 3306);
     }
     
     public function getConnection() {
