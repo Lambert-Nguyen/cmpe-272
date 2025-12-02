@@ -42,8 +42,8 @@ $router->addRoute('GET', '/combined-users', 'CombinedUsersController', 'index');
 $router->addRoute('GET', '/api/users', 'CombinedUsersController', 'api');
 $router->addRoute('GET', '/test-connection', 'CombinedUsersController', 'testConnection');
 
-// Legacy routes (CMPE 272 app)
-$router->addRoute('GET', '/', 'CompanyController', 'index'); // Changed to company homepage
+// Homepage route - Product-centric landing page
+$router->addRoute('GET', '/', 'HomeController', 'index'); // Product-centric homepage
 $router->addRoute('GET', '/about', 'HomeController', 'about');
 
 // User routes
