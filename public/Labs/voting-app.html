@@ -118,78 +118,154 @@
             box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
         }
         
-        /* Vote Items */
-        .vote-item {
-            padding: 20px;
-            margin: 15px 0;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Card Stack Container */
+        .card-stack-container {
             position: relative;
-            overflow: hidden;
-            border: 2px solid transparent;
+            height: 500px;
+            margin: 20px 0;
+            perspective: 1000px;
         }
         
-        .vote-item::before {
-            content: '';
+        .card-stack {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Vote Card */
+        .vote-card {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+            touch-action: pan-y;
         }
         
-        .vote-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            border-color: rgba(102, 126, 234, 0.3);
+        .vote-card:active {
+            cursor: grabbing;
         }
         
-        .vote-item:hover::before {
-            transform: scaleX(1);
+        .vote-card.swiping {
+            transition: none;
         }
         
-        .vote-item.voted {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        .vote-card.swipe-right {
+            transform: translateX(150%) rotate(30deg) !important;
+            opacity: 0;
         }
         
-        .vote-question {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 18px;
+        .vote-card.swipe-left {
+            transform: translateX(-150%) rotate(-30deg) !important;
+            opacity: 0;
+        }
+        
+        .vote-card.next {
+            transform: scale(0.95) translateY(10px);
+            opacity: 0.7;
+            z-index: 1;
+        }
+        
+        .vote-card.active {
+            z-index: 10;
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        
+        /* Card Content */
+        .card-question {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .card-text {
+            font-size: 32px;
+            font-weight: 700;
             color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .card-hint {
+            font-size: 16px;
+            color: #999;
+            margin-top: 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            justify-content: center;
         }
         
-        .vote-icon {
-            font-size: 32px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        .swipe-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 60px;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+        
+        .swipe-indicator.show {
+            opacity: 0.8;
+        }
+        
+        .swipe-indicator.yes {
+            right: 30px;
+            color: #4CAF50;
+        }
+        
+        .swipe-indicator.no {
+            left: 30px;
+            color: #f44336;
         }
         
         /* Vote Buttons */
         .vote-buttons {
             display: flex;
-            gap: 12px;
+            gap: 15px;
+            margin-top: 30px;
         }
         
         .vote-buttons .ui-btn {
             flex: 1;
             margin: 0 !important;
-            border-radius: 12px !important;
-            padding: 14px 20px !important;
-            font-weight: 600 !important;
-            font-size: 16px !important;
+            border-radius: 15px !important;
+            padding: 18px 25px !important;
+            font-weight: 700 !important;
+            font-size: 18px !important;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             transition: all 0.3s ease !important;
             border: none !important;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2) !important;
         }
         
         .vote-buttons .ui-btn[data-theme="b"] {
@@ -197,11 +273,10 @@
             color: white !important;
         }
         
-        .vote-buttons .ui-btn[data-theme="b"]:active,
-        .vote-buttons .ui-btn[data-theme="b"]:hover {
+        .vote-buttons .ui-btn[data-theme="b"]:active {
             background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4) !important;
+            transform: scale(0.95);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4) !important;
         }
         
         .vote-buttons .ui-btn[data-theme="a"] {
@@ -209,63 +284,37 @@
             color: white !important;
         }
         
-        .vote-buttons .ui-btn[data-theme="a"]:active,
-        .vote-buttons .ui-btn[data-theme="a"]:hover {
+        .vote-buttons .ui-btn[data-theme="a"]:active {
             background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4) !important;
+            transform: scale(0.95);
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.4) !important;
         }
         
-        /* Voted State */
-        .voted-badge {
-            padding: 15px 20px;
-            border-radius: 15px;
+        /* Completion Message */
+        .completion-message {
             text-align: center;
-            font-weight: 600;
-            font-size: 16px;
+            padding: 60px 30px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .completion-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .completion-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            animation: slideIn 0.4s ease;
         }
         
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .voted-badge.yes {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            color: #2e7d32;
-            border: 2px solid #4CAF50;
-        }
-        
-        .voted-badge.no {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            color: #c62828;
-            border: 2px solid #f44336;
-        }
-        
-        .change-vote-btn {
-            margin-top: 10px !important;
-            border-radius: 10px !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3) !important;
-        }
-        
-        .change-vote-btn:active {
-            transform: scale(0.98);
+        .completion-subtext {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
         }
         
         /* Results Section */
@@ -405,8 +454,26 @@
         
         /* Responsive */
         @media (max-width: 480px) {
-            .vote-question {
-                font-size: 18px;
+            .card-stack-container {
+                height: 450px;
+            }
+            
+            .card-icon {
+                font-size: 80px;
+            }
+            
+            .card-text {
+                font-size: 24px;
+            }
+            
+            .card-hint {
+                font-size: 14px;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .card-hint span:nth-child(2) {
+                display: none;
             }
             
             .stats-number {
@@ -419,6 +486,10 @@
             
             .action-buttons {
                 flex-direction: column;
+            }
+            
+            .swipe-indicator {
+                font-size: 40px;
             }
         }
     </style>
@@ -446,8 +517,12 @@
                 </div>
             </div>
             
-            <div id="voting-list">
-                <!-- Voting items will be dynamically generated -->
+            <div class="card-stack-container">
+                <div class="card-stack" id="card-stack">
+                    <!-- Cards will be dynamically generated -->
+                </div>
+                <div class="swipe-indicator yes">YES</div>
+                <div class="swipe-indicator no">NO</div>
             </div>
             
             <div class="action-buttons">
@@ -540,82 +615,233 @@
             return Object.keys(votes).length;
         }
         
-        // Render voting list
-        function renderVotingList() {
-            const container = $('#voting-list');
+        let currentCardIndex = 0;
+        let startX = 0;
+        let startY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        let isDragging = false;
+        let swipeThreshold = 50;
+        
+        // Get unvoted items
+        function getUnvotedItems() {
+            const votes = getVotes();
+            return votingChoices.filter(item => !votes[item.id]);
+        }
+        
+        // Get current card item
+        function getCurrentCardItem() {
+            const unvoted = getUnvotedItems();
+            return unvoted[currentCardIndex] || null;
+        }
+        
+        // Render card stack
+        function renderCardStack() {
+            const container = $('#card-stack');
             container.empty();
             
-            votingChoices.forEach((item, index) => {
-                const vote = getVote(item.id);
-                const voted = vote !== null;
-                
-                const voteItem = $('<div>').addClass('vote-item' + (voted ? ' voted' : ''));
-                
-                const question = $('<div>').addClass('vote-question');
-                const icon = $('<span>').addClass('vote-icon').text(item.icon);
-                const text = $('<span>').text(item.question);
-                question.append(icon).append(text);
-                voteItem.append(question);
-                
-                if (voted) {
-                    const badge = $('<div>').addClass('voted-badge ' + vote);
-                    const icon = vote === 'yes' ? '✅' : '❌';
-                    badge.html(`<span style="font-size: 20px;">${icon}</span> <span>You voted: ${vote.toUpperCase()}</span>`);
-                    voteItem.append(badge);
-                    
-                    const changeBtn = $('<a>')
-                        .attr('href', '#')
-                        .attr('data-role', 'button')
-                        .addClass('change-vote-btn')
-                        .text('🔄 Change Vote')
-                        .on('click', function(e) {
-                            e.preventDefault();
-                            setVote(item.id, null);
-                            renderVotingList();
-                            updateStats();
-                        });
-                    voteItem.append(changeBtn);
-                } else {
-                    const buttons = $('<div>').addClass('vote-buttons');
-                    
-                    const yesBtn = $('<a>')
-                        .attr('href', '#')
-                        .attr('data-role', 'button')
-                        .attr('data-theme', 'b')
-                        .html('👍 <span>YES</span>')
-                        .on('click', function(e) {
-                            e.preventDefault();
-                            setVote(item.id, 'yes');
-                            renderVotingList();
-                            updateStats();
-                        });
-                    
-                    const noBtn = $('<a>')
-                        .attr('href', '#')
-                        .attr('data-role', 'button')
-                        .attr('data-theme', 'a')
-                        .html('👎 <span>NO</span>')
-                        .on('click', function(e) {
-                            e.preventDefault();
-                            setVote(item.id, 'no');
-                            renderVotingList();
-                            updateStats();
-                        });
-                    
-                    buttons.append(yesBtn).append(noBtn);
-                    voteItem.append(buttons);
-                }
-                
-                // Add staggered animation
-                voteItem.css({
-                    'animation-delay': (index * 0.05) + 's'
+            const unvoted = getUnvotedItems();
+            
+            if (unvoted.length === 0) {
+                // All items voted - show completion message
+                const completion = $('<div>').addClass('completion-message');
+                completion.html(`
+                    <div class="completion-icon">🎉</div>
+                    <div class="completion-text">All Done!</div>
+                    <div class="completion-subtext">You've voted on all 10 items</div>
+                    <a href="#results" data-role="button" data-theme="b" data-icon="bars" style="margin-top: 20px;">View Results</a>
+                `);
+                container.append(completion);
+                container.trigger('create');
+                return;
+            }
+            
+            // Show up to 2 cards (current + next)
+            const cardsToShow = Math.min(2, unvoted.length);
+            
+            for (let i = 0; i < cardsToShow; i++) {
+                const item = unvoted[i];
+                const card = createCard(item, i === 0);
+                container.append(card);
+            }
+            
+            // Initialize swipe handlers
+            initSwipeHandlers();
+            container.trigger('create');
+        }
+        
+        // Create a card element
+        function createCard(item, isActive) {
+            const card = $('<div>').addClass('vote-card' + (isActive ? ' active' : ' next'));
+            card.attr('data-item-id', item.id);
+            
+            const questionDiv = $('<div>').addClass('card-question');
+            questionDiv.html(`
+                <div class="card-icon">${item.icon}</div>
+                <div class="card-text">${item.question}</div>
+                <div class="card-hint">
+                    <span>👈 Swipe left for NO</span>
+                    <span style="margin: 0 15px;">|</span>
+                    <span>Swipe right for YES 👉</span>
+                </div>
+            `);
+            
+            const buttons = $('<div>').addClass('vote-buttons');
+            const yesBtn = $('<a>')
+                .attr('href', '#')
+                .attr('data-role', 'button')
+                .attr('data-theme', 'b')
+                .html('👍 YES')
+                .on('click', function(e) {
+                    e.preventDefault();
+                    handleVote(item.id, 'yes');
                 });
+            
+            const noBtn = $('<a>')
+                .attr('href', '#')
+                .attr('data-role', 'button')
+                .attr('data-theme', 'a')
+                .html('👎 NO')
+                .on('click', function(e) {
+                    e.preventDefault();
+                    handleVote(item.id, 'no');
+                });
+            
+            buttons.append(yesBtn).append(noBtn);
+            card.append(questionDiv).append(buttons);
+            
+            return card;
+        }
+        
+        // Handle vote
+        function handleVote(itemId, vote) {
+            setVote(itemId, vote);
+            updateStats();
+            
+            // Animate card out
+            const activeCard = $('.vote-card.active');
+            if (activeCard.length) {
+                activeCard.addClass(vote === 'yes' ? 'swipe-right' : 'swipe-left');
                 
-                container.append(voteItem);
+                setTimeout(() => {
+                    currentCardIndex = 0;
+                    renderCardStack();
+                }, 300);
+            }
+        }
+        
+        // Initialize swipe handlers
+        function initSwipeHandlers() {
+            const activeCard = $('.vote-card.active');
+            if (!activeCard.length) return;
+            
+            // Touch events
+            activeCard.on('touchstart', handleStart);
+            activeCard.on('touchmove', handleMove);
+            activeCard.on('touchend', handleEnd);
+            
+            // Mouse events (for desktop)
+            activeCard.on('mousedown', handleStart);
+        }
+        
+        // Handle touch/mouse start
+        function handleStart(e) {
+            const activeCard = $('.vote-card.active');
+            if (!activeCard.length || activeCard.hasClass('swiping')) return;
+            
+            isDragging = true;
+            const touch = e.touches ? e.touches[0] : e;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            currentX = startX;
+            currentY = startY;
+            
+            activeCard.addClass('swiping');
+            
+            // Attach mouse move/up handlers to document for desktop
+            if (!e.touches) {
+                $(document).on('mousemove.vote', handleMove);
+                $(document).on('mouseup.vote', handleEnd);
+            }
+            
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Handle touch/mouse move
+        function handleMove(e) {
+            if (!isDragging) return;
+            
+            const activeCard = $('.vote-card.active');
+            if (!activeCard.length) return;
+            
+            const touch = e.touches ? e.touches[0] : e;
+            currentX = touch.clientX;
+            currentY = touch.clientY;
+            
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            const rotation = deltaX * 0.1;
+            
+            activeCard.css({
+                transform: `translateX(${deltaX}px) translateY(${deltaY * 0.1}px) rotate(${rotation}deg)`
             });
             
-            // Refresh jQuery Mobile styling
-            container.trigger('create');
+            // Show indicators
+            if (Math.abs(deltaX) > 30) {
+                if (deltaX > 0) {
+                    $('.swipe-indicator.yes').addClass('show');
+                    $('.swipe-indicator.no').removeClass('show');
+                } else {
+                    $('.swipe-indicator.no').addClass('show');
+                    $('.swipe-indicator.yes').removeClass('show');
+                }
+            } else {
+                $('.swipe-indicator').removeClass('show');
+            }
+            
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Handle touch/mouse end
+        function handleEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            const activeCard = $('.vote-card.active');
+            if (!activeCard.length) return;
+            
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            const itemId = parseInt(activeCard.attr('data-item-id'));
+            
+            $('.swipe-indicator').removeClass('show');
+            
+            // Remove mouse handlers
+            $(document).off('mousemove.vote mouseup.vote');
+            
+            // Check if swipe is significant enough
+            if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Swipe right = YES, Swipe left = NO
+                const vote = deltaX > 0 ? 'yes' : 'no';
+                handleVote(itemId, vote);
+            } else {
+                // Snap back
+                activeCard.css({
+                    transform: 'translateX(0) translateY(0) rotate(0deg)'
+                });
+            }
+            
+            activeCard.removeClass('swiping');
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Clean up event handlers
+        function cleanupHandlers() {
+            $('.vote-card').off('touchstart touchmove touchend mousedown');
+            $(document).off('mousemove.vote mouseup.vote');
         }
         
         // Update statistics
@@ -692,7 +918,9 @@
         function resetVotes() {
             if (confirm('Are you sure you want to reset all votes?')) {
                 localStorage.removeItem('foodVotes');
-                renderVotingList();
+                currentCardIndex = 0;
+                cleanupHandlers();
+                renderCardStack();
                 updateStats();
                 if ($.mobile.activePage.attr('id') === 'results') {
                     renderResults();
@@ -702,8 +930,14 @@
         
         // Page initialization
         $(document).on('pagecreate', '#home', function() {
-            renderVotingList();
+            currentCardIndex = 0;
+            cleanupHandlers();
+            renderCardStack();
             updateStats();
+        });
+        
+        $(document).on('pagehide', '#home', function() {
+            cleanupHandlers();
         });
         
         $(document).on('pagebeforeshow', '#results', function() {
