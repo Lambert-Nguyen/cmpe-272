@@ -426,28 +426,43 @@
             gap: 12px;
             margin-top: 25px;
             flex-wrap: wrap;
+            align-items: stretch;
+            width: 100%;
         }
         
-        .action-buttons .ui-btn {
-            flex: 1;
+        .action-buttons .ui-btn,
+        .action-buttons .action-btn {
+            flex: 1 1 0;
             min-width: 140px;
             border-radius: 12px !important;
             padding: 14px 20px !important;
             font-weight: 600 !important;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
             transition: all 0.3s ease !important;
+            margin: 0 !important;
+            height: auto !important;
+            min-height: 48px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            line-height: 1.4 !important;
         }
         
-        .action-buttons .ui-btn:active {
+        .action-buttons .ui-btn:active,
+        .action-buttons .action-btn:active {
             transform: scale(0.98);
         }
         
-        .action-buttons .ui-btn[data-theme="b"] {
+        .action-buttons .ui-btn[data-theme="b"],
+        .action-buttons .action-btn[data-theme="b"] {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
             color: white !important;
         }
         
-        .action-buttons .ui-btn[data-theme="a"] {
+        .action-buttons .ui-btn[data-theme="a"],
+        .action-buttons .action-btn[data-theme="a"] {
             background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important;
             color: white !important;
         }
@@ -526,8 +541,8 @@
             </div>
             
             <div class="action-buttons">
-                <a href="#results" data-role="button" data-theme="b" data-icon="bars">📊 View All Results</a>
-                <a href="#" data-role="button" data-theme="a" data-icon="refresh" id="reset-btn">🔄 Reset Votes</a>
+                <a href="#results" data-role="button" data-theme="b" data-icon="bars" class="action-btn">📊 View All Results</a>
+                <a href="#" data-role="button" data-theme="a" data-icon="refresh" id="reset-btn" class="action-btn">🔄 Reset Votes</a>
             </div>
         </div>
     </div>
