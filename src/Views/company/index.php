@@ -83,7 +83,7 @@
     <!-- Why Choose Us -->
     <section class="section-padding bg-light">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title">Why Choose Lambert Nguyen Company?</h2>
+            <h2 class="section-title">Why Choose Lambert Engineering & Business Solutions?</h2>
             <p class="section-subtitle">Your trusted partner in digital transformation</p>
         </div>
         

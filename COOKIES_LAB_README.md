@@ -1,7 +1,7 @@
 # 🍪 Web Cookies Tracking Lab - Implementation Guide
 
 ## Overview
-This document describes the web cookies tracking implementation for the Lambert Nguyen Company website products section (CMPE 272 Lab - Tracking with Web Cookies).
+This document describes the web cookies tracking implementation for the Lambert Engineering & Business Solutions website products section (CMPE 272 Lab - Tracking with Web Cookies).
 
 ---
 

@@ -23,7 +23,7 @@
                 <div class="about-image">
                     <div class="image-placeholder">
                         <i class="fas fa-building fa-5x text-primary"></i>
-                        <p class="mt-3 text-muted">Lambert Nguyen Company Office</p>
+                        <p class="mt-3 text-muted">Lambert Engineering & Business Solutions Office</p>
                     </div>
                 </div>
             </div>

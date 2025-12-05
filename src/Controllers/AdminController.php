@@ -22,7 +22,7 @@ class AdminController extends Controller {
         }
         
         $data = [
-            'title' => 'Admin Login - Lambert Nguyen Company',
+            'title' => 'Admin Login - Lambert Engineering & Business Solutions',
             'error' => null
         ];
         

@@ -1,7 +1,7 @@
 # Secure Admin Section - Implementation Documentation
 
 ## Overview
-This document describes the secure admin section implementation for the Lambert Nguyen Company website (CMPE 272 Homework - October 9, 2025).
+This document describes the secure admin section implementation for the Lambert Engineering & Business Solutions website (CMPE 272 Homework - October 9, 2025).
 
 ## Requirements Met ✅
 - ✅ Added a secure section to the website

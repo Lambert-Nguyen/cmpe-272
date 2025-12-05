@@ -65,7 +65,7 @@ https://lambertnguyen.cloud/api/users
 ```json
 {
   "success": true,
-  "company": "Lambert Nguyen Company",
+  "company": "Lambert Engineering & Business Solutions",
   "count": 15,
   "users": [...]
 }
@@ -73,7 +73,7 @@ https://lambertnguyen.cloud/api/users
 
 ### Combined Users Page Shows
 - Statistics: Total Companies, Active Connections, Combined Users
-- Lambert Nguyen Company section (15 users)
+- Lambert Engineering & Business Solutions section (15 users)
 - Partner company sections (if configured)
 - Status badges for each company
 

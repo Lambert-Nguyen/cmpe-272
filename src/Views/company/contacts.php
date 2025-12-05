@@ -113,7 +113,7 @@
     <section class="section-padding bg-light">
         <div class="text-center mb-5" data-aos="fade-up">
             <h2 class="section-title">Our Team Directory</h2>
-            <p class="section-subtitle">Meet the experts behind Lambert Nguyen Company</p>
+            <p class="section-subtitle">Meet the experts behind Lambert Engineering & Business Solutions</p>
         </div>
         
         <?php if (!empty($contacts)): ?>

@@ -235,7 +235,7 @@ class ProductController extends Controller {
         $this->trackProductVisit($id);
         
         $data = [
-            'title' => $product['name'] . ' - Lambert Nguyen Company',
+            'title' => $product['name'] . ' - Lambert Engineering & Business Solutions',
             'product' => $product,
             'related_products' => $this->getRelatedProducts($id)
         ];
@@ -257,7 +257,7 @@ class ProductController extends Controller {
         }
         
         $data = [
-            'title' => 'Recently Visited Products - Lambert Nguyen Company',
+            'title' => 'Recently Visited Products - Lambert Engineering & Business Solutions',
             'products' => $products
         ];
         
@@ -280,7 +280,7 @@ class ProductController extends Controller {
         }
         
         $data = [
-            'title' => 'Most Visited Products - Lambert Nguyen Company',
+            'title' => 'Most Visited Products - Lambert Engineering & Business Solutions',
             'products' => $products
         ];
         

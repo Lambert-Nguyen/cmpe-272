@@ -92,7 +92,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
 ```json
 {
   "success": true,
-  "company": "Lambert Nguyen Company",
+  "company": "Lambert Engineering & Business Solutions",
   "count": 15,
   "users": [
     {
@@ -159,7 +159,7 @@ curl https://lambertnguyen.cloud/api/users
 ```json
 {
   "success": true,
-  "company": "Lambert Nguyen Company",
+  "company": "Lambert Engineering & Business Solutions",
   "count": 15,
   "users": [...],
   "timestamp": "2025-10-30T..."

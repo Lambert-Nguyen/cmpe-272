@@ -66,7 +66,7 @@ class CombinedUsersController extends Controller {
         // Combine all users
         $allCompanies = [
             [
-                'name' => 'Lambert Nguyen Company',
+                'name' => 'Lambert Engineering & Business Solutions',
                 'url' => 'https://lambertnguyen.cloud',
                 'users' => $localUsers,
                 'source' => 'local',
@@ -119,7 +119,7 @@ class CombinedUsersController extends Controller {
         // Return JSON response
         echo json_encode([
             'success' => true,
-            'company' => 'Lambert Nguyen Company',
+            'company' => 'Lambert Engineering & Business Solutions',
             'url' => 'https://lambertnguyen.cloud',
             'count' => count($users),
             'users' => $users,

@@ -28,7 +28,7 @@
         <div class="container">
             <a class="navbar-brand modern-brand" href="/">
                 <i class="fas fa-building me-2"></i>
-                <span class="brand-text">Lambert Nguyen Company</span>
+                <span class="brand-text">Lambert Engineering & Business Solutions</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

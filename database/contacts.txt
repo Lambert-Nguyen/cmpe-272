@@ -1,4 +1,4 @@
-# Lambert Nguyen Company Contact Directory
+# Lambert Engineering & Business Solutions Contact Directory
 # Format: Name|Position|Email|Phone|Department
 # 
 Lambert Nguyen|Chief Executive Officer|lambert.nguyen@lambertnguyen.com|+1 (408) 555-0100|Executive

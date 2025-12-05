@@ -6,8 +6,8 @@ class CompanyController extends Controller {
     
     public function index() {
         $data = [
-            'title' => 'Lambert Nguyen Company - Technology Consulting & Software Development',
-            'company_name' => 'Lambert Nguyen Company',
+            'title' => 'Lambert Engineering & Business Solutions - Technology Consulting & Software Development',
+            'company_name' => 'Lambert Engineering & Business Solutions',
             'tagline' => 'Innovative Technology Solutions for Modern Businesses',
             'description' => 'We specialize in enterprise software development, cloud migration, and digital transformation consulting.',
             'hero_features' => [
@@ -23,8 +23,8 @@ class CompanyController extends Controller {
     
     public function about() {
         $data = [
-            'title' => 'About Lambert Nguyen Company',
-            'company_name' => 'Lambert Nguyen Company',
+            'title' => 'About Lambert Engineering & Business Solutions',
+            'company_name' => 'Lambert Engineering & Business Solutions',
             'mission' => 'To empower businesses through innovative technology solutions that drive growth, efficiency, and competitive advantage.',
             'vision' => 'To be the leading technology consulting firm that transforms how businesses operate in the digital age.',
             'values' => [
@@ -33,7 +33,7 @@ class CompanyController extends Controller {
                 'Partnership' => 'We build lasting relationships with our clients and stakeholders.',
                 'Integrity' => 'We operate with transparency, honesty, and ethical standards.'
             ],
-            'history' => 'Founded in 2020, Lambert Nguyen Company has grown from a small startup to a trusted technology partner for businesses across various industries. Our team of experienced developers, architects, and consultants brings decades of combined expertise to every project.',
+            'history' => 'Founded in 2020, Lambert Engineering & Business Solutions has grown from a small startup to a trusted technology partner for businesses across various industries. Our team of experienced developers, architects, and consultants brings decades of combined expertise to every project.',
             'team_stats' => [
                 'clients_served' => '150+',
                 'projects_completed' => '300+',
@@ -52,8 +52,8 @@ class CompanyController extends Controller {
         $allProducts = $productController->getAllProducts();
         
         $data = [
-            'title' => 'Products & Services - Lambert Nguyen Company',
-            'company_name' => 'Lambert Nguyen Company',
+            'title' => 'Products & Services - Lambert Engineering & Business Solutions',
+            'company_name' => 'Lambert Engineering & Business Solutions',
             'products' => $allProducts
         ];
         
@@ -62,11 +62,11 @@ class CompanyController extends Controller {
     
     public function news() {
         $data = [
-            'title' => 'Latest News - Lambert Nguyen Company',
-            'company_name' => 'Lambert Nguyen Company',
+            'title' => 'Latest News - Lambert Engineering & Business Solutions',
+            'company_name' => 'Lambert Engineering & Business Solutions',
             'news_articles' => [
                 [
-                    'title' => 'Lambert Nguyen Company Expands AI Services Division',
+                    'title' => 'Lambert Engineering & Business Solutions Expands AI Services Division',
                     'date' => '2024-09-15',
                     'category' => 'Company News',
                     'excerpt' => 'We are excited to announce the expansion of our AI and Machine Learning services division, bringing cutting-edge artificial intelligence solutions to our clients.',
@@ -85,7 +85,7 @@ class CompanyController extends Controller {
                     'title' => 'New Partnership with Leading University for Research',
                     'date' => '2024-08-10',
                     'category' => 'Partnership',
-                    'excerpt' => 'Lambert Nguyen Company partners with San Jose State University to advance research in enterprise software platforms and cloud computing.',
+                    'excerpt' => 'Lambert Engineering & Business Solutions partners with San Jose State University to advance research in enterprise software platforms and cloud computing.',
                     'content' => 'This strategic partnership will involve collaborative research projects, internship programs, and knowledge sharing initiatives. Students will gain hands-on experience with real-world technology challenges.',
                     'image' => '/images/university-partnership.jpg'
                 ],
@@ -137,8 +137,8 @@ class CompanyController extends Controller {
         }
         
         $data = [
-            'title' => 'Contact Us - Lambert Nguyen Company',
-            'company_name' => 'Lambert Nguyen Company',
+            'title' => 'Contact Us - Lambert Engineering & Business Solutions',
+            'company_name' => 'Lambert Engineering & Business Solutions',
             'contacts' => $contacts,
             'company_info' => [
                 'address' => '123 Technology Drive, San Jose, CA 95110',
